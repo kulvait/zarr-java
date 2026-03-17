@@ -2,6 +2,13 @@
 
 This repository contains a Java implementation of Zarr version 2 and 3.
 
+Fork to improve Zip store responsiveness.
+
+Test building
+```
+mvn clean install -DskipTests -Dgpg.skip
+```
+
 ## Documentation
 
 For comprehensive documentation, see the [**User Guide**](USERGUIDE.md), which includes:

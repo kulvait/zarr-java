@@ -42,36 +42,75 @@ public class ReadOnlyZipStore extends ZipStore {
         this(Paths.get(underlyingStorePath));
     }
 
-    private synchronized void ensureCache() {
-        if (isCached) return;
+private synchronized void ensureCacheNew() {
+    fileIndex = new LinkedHashMap<>();
+    directoryIndex = new LinkedHashSet<>();
 
-        fileIndex = new LinkedHashMap<>();
-        directoryIndex = new LinkedHashSet<>();
-
-        InputStream inputStream = underlyingStore.getInputStream();
-        if (inputStream == null) {
-            isCached = true;
-            return;
-        }
-
-        try (ZipArchiveInputStream zis = new ZipArchiveInputStream(inputStream)) {
-            ZipArchiveEntry entry;
-            while ((entry = zis.getNextEntry()) != null) {
-                String name = normalizeEntryName(entry.getName());
-                if (entry.isDirectory()) {
-                    directoryIndex.add(name);
-                } else {
-                    fileIndex.put(name, entry.getSize());
-                }
-            }
-        } catch (IOException e) {
-            throw StoreException.readFailed(
-                    underlyingStore.toString(),
-                    new String[]{},
-                    new IOException("Failed to read ZIP directory from underlying store", e));
-        }
+    InputStream inputStream = underlyingStore.getInputStream();
+    if (inputStream == null) {
         isCached = true;
+        return;
     }
+
+    try (ZipArchiveInputStream zis = new ZipArchiveInputStream(inputStream)) {
+        ZipArchiveEntry entry;
+        while ((entry = zis.getNextEntry()) != null) {
+            String name = normalizeEntryName(entry.getName());
+            if (entry.isDirectory()) {
+                directoryIndex.add(name);
+            } else {
+                fileIndex.put(name, entry.getSize());
+            }
+        }
+    } catch (IOException e) {
+        throw StoreException.readFailed(
+                underlyingStore.toString(),
+                new String[]{},
+                new IOException("Failed to read ZIP directory from underlying store", e));
+    }
+
+    isCached = true;
+}
+
+private synchronized void ensureCacheOriginal() {
+    fileIndex = new LinkedHashMap<>();
+    directoryIndex = new LinkedHashSet<>();
+
+    InputStream inputStream = underlyingStore.getInputStream();
+    if (inputStream == null) {
+        isCached = true;
+        return;
+    }
+
+    try (ZipArchiveInputStream zis = new ZipArchiveInputStream(inputStream)) {
+        ZipArchiveEntry entry;
+        while ((entry = zis.getNextEntry()) != null) {
+            String name = normalizeEntryName(entry.getName());
+            if (entry.isDirectory()) {
+                directoryIndex.add(name);
+            } else {
+                fileIndex.put(name, entry.getSize());
+            }
+        }
+    } catch (IOException e) {
+        throw StoreException.readFailed(
+                underlyingStore.toString(),
+                new String[]{},
+                new IOException("Failed to read ZIP directory from underlying store", e));
+    }
+    isCached = true;
+}
+
+private synchronized void ensureCache() {
+    if (isCached) return;
+
+    long startTime = System.currentTimeMillis();
+    // swap to test the new implementation:
+    ensureCacheOriginal(); // or ensureCacheNew()
+    long endTime = System.currentTimeMillis();
+
+    System.out.println("Cached ZIP directory in " + (endTime - startTime) + " ms");
+}
 
     String resolveKeys(String[] keys) {
         return String.join("/", keys);
