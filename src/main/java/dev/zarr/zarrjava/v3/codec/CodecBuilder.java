@@ -25,8 +25,7 @@ public class CodecBuilder extends dev.zarr.zarrjava.core.codec.CodecBuilder {
     }
 
     public CodecBuilder withBlosc(
-            Blosc.Compressor cname, Blosc.Shuffle shuffle, int clevel, int typeSize,
-            int blockSize
+                                  Blosc.Compressor cname, Blosc.Shuffle shuffle, int clevel, int typeSize, int blockSize
     ) {
         try {
             codecs.add(new BloscCodec(
@@ -116,30 +115,23 @@ public class CodecBuilder extends dev.zarr.zarrjava.core.codec.CodecBuilder {
     public CodecBuilder withSharding(int[] chunkShape) {
         try {
             codecs.add(
-                    new ShardingIndexedCodec(new ShardingIndexedCodec.Configuration(chunkShape,
-                            new Codec[]{new BytesCodec(new Configuration(Endian.LITTLE))},
-                            new Codec[]{new BytesCodec(new Configuration(Endian.LITTLE)), new Crc32cCodec()},
-                            "end")));
+                    new ShardingIndexedCodec(new ShardingIndexedCodec.Configuration(chunkShape, new Codec[]{new BytesCodec(new Configuration(Endian.LITTLE))}, new Codec[]{new BytesCodec(new Configuration(Endian.LITTLE)), new Crc32cCodec()}, "end")));
         } catch (ZarrException e) {
             throw new RuntimeException(e);
         }
         return this;
     }
 
-    public CodecBuilder withSharding(int[] chunkShape,
-                                     Function<CodecBuilder, CodecBuilder> codecBuilder) {
+    public CodecBuilder withSharding(int[] chunkShape, Function<CodecBuilder, CodecBuilder> codecBuilder) {
         return withSharding(chunkShape, codecBuilder, "end");
     }
 
-    public CodecBuilder withSharding(int[] chunkShape,
-                                     Function<CodecBuilder, CodecBuilder> codecBuilder, String indexLocation) {
+    public CodecBuilder withSharding(int[] chunkShape, Function<CodecBuilder, CodecBuilder> codecBuilder, String indexLocation) {
         CodecBuilder nestedBuilder = new CodecBuilder((DataType) dataType);
         try {
             codecs.add(new ShardingIndexedCodec(
-                    new ShardingIndexedCodec.Configuration(chunkShape,
-                            codecBuilder.apply(nestedBuilder).build(),
-                            new Codec[]{new BytesCodec(Endian.LITTLE), new Crc32cCodec()},
-                            indexLocation)));
+                    new ShardingIndexedCodec.Configuration(chunkShape, codecBuilder.apply(
+                            nestedBuilder).build(), new Codec[]{new BytesCodec(Endian.LITTLE), new Crc32cCodec()}, indexLocation)));
         } catch (ZarrException e) {
             throw new RuntimeException(e);
         }
@@ -153,10 +145,8 @@ public class CodecBuilder extends dev.zarr.zarrjava.core.codec.CodecBuilder {
 
     private void autoInsertBytesCodec() {
         if (codecs.stream().noneMatch(c -> c instanceof ArrayBytesCodec)) {
-            Codec[] arrayArrayCodecs = codecs.stream().filter(c -> c instanceof ArrayArrayCodec)
-                    .toArray(Codec[]::new);
-            Codec[] bytesBytesCodecs = codecs.stream().filter(c -> c instanceof BytesBytesCodec)
-                    .toArray(Codec[]::new);
+            Codec[] arrayArrayCodecs = codecs.stream().filter(c -> c instanceof ArrayArrayCodec).toArray(Codec[]::new);
+            Codec[] bytesBytesCodecs = codecs.stream().filter(c -> c instanceof BytesBytesCodec).toArray(Codec[]::new);
             this.codecs = new ArrayList<>();
             Collections.addAll(this.codecs, arrayArrayCodecs);
             this.codecs.add(new BytesCodec(new BytesCodec.Configuration(Endian.LITTLE)));

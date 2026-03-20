@@ -78,8 +78,8 @@ public abstract class BytesCodec extends ArrayBytesCodec {
     }
 
     public enum Endian {
-        LITTLE("little"),
-        BIG("big");
+        LITTLE("little"), BIG("big");
+
         private final String endian;
 
         Endian(String endian) {

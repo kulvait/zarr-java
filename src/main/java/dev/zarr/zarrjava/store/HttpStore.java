@@ -23,11 +23,9 @@ public class HttpStore implements Store {
 
     public HttpStore(@Nonnull String uri, int timeoutSeconds, int maxRetries, long retryDelayMs) {
         this.uri = uri;
-        this.httpClient = new OkHttpClient.Builder()
-                .connectTimeout(Duration.ofSeconds(timeoutSeconds))
-                .readTimeout(Duration.ofSeconds(timeoutSeconds))
-                .addInterceptor(new RetryInterceptor(maxRetries, retryDelayMs))
-                .build();
+        this.httpClient = new OkHttpClient.Builder().connectTimeout(Duration.ofSeconds(timeoutSeconds)).readTimeout(
+                Duration.ofSeconds(timeoutSeconds)).addInterceptor(
+                        new RetryInterceptor(maxRetries, retryDelayMs)).build();
     }
 
     String resolveKeys(String[] keys) {
@@ -84,8 +82,7 @@ public class HttpStore implements Store {
     @Override
     public ByteBuffer get(String[] keys, long start) {
         Request request = new Request.Builder().url(resolveKeys(keys)).header(
-                        "Range", start < 0 ? String.format("bytes=%d", start) : String.format("bytes=%d-", start))
-                .build();
+                "Range", start < 0 ? String.format("bytes=%d", start) : String.format("bytes=%d-", start)).build();
 
         return get(request, keys);
     }
@@ -169,11 +166,7 @@ public class HttpStore implements Store {
         String url = resolveKeys(keys);
         // Explicitly request "identity" encoding to prevent OkHttp from adding "gzip"
         // and subsequently stripping the Content-Length header.
-        Request request = new Request.Builder()
-                .head()
-                .url(url)
-                .header("Accept-Encoding", "identity")
-                .build();
+        Request request = new Request.Builder().head().url(url).header("Accept-Encoding", "identity").build();
 
         try (Response response = httpClient.newCall(request).execute()) {
             if (!response.isSuccessful()) {

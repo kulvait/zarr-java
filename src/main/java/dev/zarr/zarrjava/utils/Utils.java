@@ -15,13 +15,11 @@ import java.util.stream.StreamSupport;
 public class Utils {
 
     public static ByteBuffer allocateNative(int capacity) {
-        return ByteBuffer.allocate(capacity)
-                .order(ByteOrder.nativeOrder());
+        return ByteBuffer.allocate(capacity).order(ByteOrder.nativeOrder());
     }
 
     public static ByteBuffer makeByteBuffer(int capacity, Function<ByteBuffer, ByteBuffer> func) {
-        ByteBuffer buf = ByteBuffer.allocate(capacity)
-                .order(ByteOrder.LITTLE_ENDIAN);
+        ByteBuffer buf = ByteBuffer.allocate(capacity).order(ByteOrder.LITTLE_ENDIAN);
         buf = func.apply(buf);
         buf.rewind();
         return buf;
@@ -42,15 +40,11 @@ public class Utils {
     }
 
     public static long[] toLongArray(int[] array) {
-        return Arrays.stream(array)
-                .mapToLong(i -> (long) i)
-                .toArray();
+        return Arrays.stream(array).mapToLong(i -> (long) i).toArray();
     }
 
     public static int[] toIntArray(long[] array) {
-        return Arrays.stream(array)
-                .mapToInt(Math::toIntExact)
-                .toArray();
+        return Arrays.stream(array).mapToInt(Math::toIntExact).toArray();
     }
 
     public static byte[] toArray(ByteBuffer buffer) {
@@ -68,9 +62,7 @@ public class Utils {
         if (arrays.length == 0) {
             return array1;
         }
-        T[] result = Arrays.copyOf(array1, array1.length + Arrays.stream(arrays)
-                .mapToInt(a -> a.length)
-                .sum());
+        T[] result = Arrays.copyOf(array1, array1.length + Arrays.stream(arrays).mapToInt(a -> a.length).sum());
         int offset = array1.length;
         for (T[] array2 : arrays) {
             System.arraycopy(array2, 0, result, offset, array2.length);
@@ -114,9 +106,9 @@ public class Utils {
      * 
      * The algorithm divides each dimension by 512 to determine the number of ~512-sized chunks,
      * then calculates chunk sizes that will cover the dimension. Note that the total coverage
-     * may slightly exceed the dimension size (e.g., for shape=1024, chunks=342 results in 
-     * 3 chunks covering 1026 elements). This is intentional and matches JZarr behavior - 
-     * Zarr handles out-of-bounds gracefully, and the goal is approximate chunk sizes rather 
+     * may slightly exceed the dimension size (e.g., for shape=1024, chunks=342 results in
+     * 3 chunks covering 1026 elements). This is intentional and matches JZarr behavior -
+     * Zarr handles out-of-bounds gracefully, and the goal is approximate chunk sizes rather
      * than perfect tiling.
      * 
      * @param shape the shape of the array

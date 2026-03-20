@@ -161,9 +161,8 @@ public class FilesystemStore implements Store, Store.ListableStore {
     public Stream<String[]> list(String[] prefix) {
         Path rootPath = resolveKeys(prefix);
         try {
-            return Files.walk(rootPath)
-                    .filter(Files::isRegularFile)
-                    .map(path -> pathToKeyArray(rootPath, path, prefix));
+            return Files.walk(rootPath).filter(Files::isRegularFile).map(path -> pathToKeyArray(rootPath, path,
+                    prefix));
         } catch (IOException e) {
             throw StoreException.listFailed(
                     this.toString(),
@@ -207,8 +206,7 @@ public class FilesystemStore implements Store, Store.ListableStore {
             if (start > 0) {
                 long skipped = inputStream.skip(start);
                 if (skipped < start) {
-                    throw new IOException("Unable to skip to position " + start +
-                            ", only skipped " + skipped + " bytes in file: " + keyPath);
+                    throw new IOException("Unable to skip to position " + start + ", only skipped " + skipped + " bytes in file: " + keyPath);
                 }
             }
             if (end != -1) {
@@ -223,8 +221,7 @@ public class FilesystemStore implements Store, Store.ListableStore {
             throw StoreException.readFailed(
                     this.toString(),
                     keys,
-                    new IOException("Failed to open input stream for file: " + keyPath +
-                            " (start: " + start + ", end: " + end + ")", e));
+                    new IOException("Failed to open input stream for file: " + keyPath + " (start: " + start + ", end: " + end + ")", e));
         }
     }
 

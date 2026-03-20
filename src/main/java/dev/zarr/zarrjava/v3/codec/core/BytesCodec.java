@@ -20,7 +20,7 @@ public class BytesCodec extends dev.zarr.zarrjava.core.codec.core.BytesCodec imp
 
     @JsonCreator
     public BytesCodec(
-            @JsonProperty(value = "configuration") Configuration configuration
+                      @JsonProperty(value = "configuration") Configuration configuration
     ) {
         this.configuration = configuration;
     }
@@ -34,8 +34,7 @@ public class BytesCodec extends dev.zarr.zarrjava.core.codec.core.BytesCodec imp
     }
 
     @Override
-    public long computeEncodedSize(long inputByteLength,
-                                   ArrayMetadata.CoreArrayMetadata arrayMetadata) throws ZarrException {
+    public long computeEncodedSize(long inputByteLength, ArrayMetadata.CoreArrayMetadata arrayMetadata) throws ZarrException {
         return inputByteLength;
     }
 
@@ -55,7 +54,7 @@ public class BytesCodec extends dev.zarr.zarrjava.core.codec.core.BytesCodec imp
 
         @JsonCreator
         public Configuration(
-                @JsonProperty(value = "endian", defaultValue = "little") BytesCodec.Endian endian) {
+                             @JsonProperty(value = "endian", defaultValue = "little") BytesCodec.Endian endian) {
             this.endian = endian;
         }
     }

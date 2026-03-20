@@ -23,7 +23,7 @@ public class ZstdCodec extends BytesBytesCodec implements Codec {
 
     @JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
     public ZstdCodec(
-            @Nonnull @JsonProperty(value = "configuration", required = true) Configuration configuration) {
+                     @Nonnull @JsonProperty(value = "configuration", required = true) Configuration configuration) {
         this.configuration = configuration;
     }
 
@@ -53,8 +53,7 @@ public class ZstdCodec extends BytesBytesCodec implements Codec {
     }
 
     @Override
-    public long computeEncodedSize(long inputByteLength,
-                                   ArrayMetadata.CoreArrayMetadata arrayMetadata) throws ZarrException {
+    public long computeEncodedSize(long inputByteLength, ArrayMetadata.CoreArrayMetadata arrayMetadata) throws ZarrException {
         throw new ZarrException("Not implemented for Zstd codec.");
     }
 
@@ -64,9 +63,7 @@ public class ZstdCodec extends BytesBytesCodec implements Codec {
         public final boolean checksum;
 
         @JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
-        public Configuration(@JsonProperty(value = "level", defaultValue = "5") int level,
-                             @JsonProperty(value = "checksum", defaultValue = "true") boolean checksum)
-                throws ZarrException {
+        public Configuration(@JsonProperty(value = "level", defaultValue = "5") int level, @JsonProperty(value = "checksum", defaultValue = "true") boolean checksum) throws ZarrException {
             if (level < -131072 || level > 22) {
                 throw new ZarrException("'level' needs to be between -131072 and 22.");
             }
@@ -75,5 +72,4 @@ public class ZstdCodec extends BytesBytesCodec implements Codec {
         }
     }
 }
-
 

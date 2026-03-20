@@ -15,15 +15,14 @@ public class V2ChunkKeyEncoding implements ChunkKeyEncoding {
     public final Separator separator;
 
     public V2ChunkKeyEncoding(
-            @Nonnull Separator separator
+                              @Nonnull Separator separator
     ) {
         this.separator = separator;
     }
 
     @Override
     public String[] encodeChunkKey(long[] chunkCoords) {
-        Stream<String> keys = Arrays.stream(chunkCoords)
-                .mapToObj(Long::toString);
+        Stream<String> keys = Arrays.stream(chunkCoords).mapToObj(Long::toString);
         if (separator == Separator.SLASH) {
             return keys.toArray(String[]::new);
         }

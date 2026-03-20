@@ -72,29 +72,23 @@ public class S3Store implements Store, Store.ListableStore {
     @Nullable
     @Override
     public ByteBuffer get(String[] keys) {
-        return get(GetObjectRequest.builder().bucket(bucketName).key(resolveKeys(keys))
-                .build());
+        return get(GetObjectRequest.builder().bucket(bucketName).key(resolveKeys(keys)).build());
     }
 
     @Nullable
     @Override
     public ByteBuffer get(String[] keys, long start) {
-        GetObjectRequest req = GetObjectRequest.builder()
-                .bucket(bucketName)
-                .key(resolveKeys(keys))
-                .range(String.format("bytes=%d-", start))
-                .build();
+        GetObjectRequest req = GetObjectRequest.builder().bucket(bucketName).key(resolveKeys(keys)).range(String.format(
+                "bytes=%d-", start)).build();
         return get(req);
     }
 
     @Nullable
     @Override
     public ByteBuffer get(String[] keys, long start, long end) {
-        GetObjectRequest req = GetObjectRequest.builder()
-                .bucket(bucketName)
-                .key(resolveKeys(keys))
-                .range(String.format("bytes=%d-%d", start, end - 1)) // S3 range is inclusive
-                .build();
+        GetObjectRequest req = GetObjectRequest.builder().bucket(bucketName).key(resolveKeys(keys)).range(String.format(
+                "bytes=%d-%d", start, end - 1)) // S3 range is inclusive
+                                               .build();
         return get(req);
     }
 
@@ -106,18 +100,14 @@ public class S3Store implements Store, Store.ListableStore {
         String key = resolveKeys(keys);
         try {
             s3client.putObject(
-                    PutObjectRequest.builder()
-                            .bucket(bucketName)
-                            .key(key)
-                            .build(),
+                    PutObjectRequest.builder().bucket(bucketName).key(key).build(),
                     RequestBody.fromBytes(data)
             );
         } catch (S3Exception e) {
             throw StoreException.writeFailed(
                     this.toString(),
                     keys,
-                    new IOException("S3 putObject failed (code: " + e.statusCode() + ") for key '" + key +
-                            "', bucket '" + bucketName + "': " + e.awsErrorDetails().errorMessage(), e));
+                    new IOException("S3 putObject failed (code: " + e.statusCode() + ") for key '" + key + "', bucket '" + bucketName + "': " + e.awsErrorDetails().errorMessage(), e));
         }
     }
 
@@ -125,16 +115,12 @@ public class S3Store implements Store, Store.ListableStore {
     public void delete(String[] keys) {
         String key = resolveKeys(keys);
         try {
-            s3client.deleteObject(DeleteObjectRequest.builder()
-                    .bucket(bucketName)
-                    .key(key)
-                    .build());
+            s3client.deleteObject(DeleteObjectRequest.builder().bucket(bucketName).key(key).build());
         } catch (S3Exception e) {
             throw StoreException.deleteFailed(
                     this.toString(),
                     keys,
-                    new IOException("S3 deleteObject failed (code: " + e.statusCode() + ") for key '" + key +
-                            "', bucket '" + bucketName + "': " + e.awsErrorDetails().errorMessage(), e));
+                    new IOException("S3 deleteObject failed (code: " + e.statusCode() + ") for key '" + key + "', bucket '" + bucketName + "': " + e.awsErrorDetails().errorMessage(), e));
         }
     }
 
@@ -146,16 +132,11 @@ public class S3Store implements Store, Store.ListableStore {
             fullPrefix += "/";
         }
 
-        ListObjectsV2Request req = ListObjectsV2Request.builder()
-                .bucket(bucketName)
-                .prefix(fullPrefix)
-                .build();
+        ListObjectsV2Request req = ListObjectsV2Request.builder().bucket(bucketName).prefix(fullPrefix).build();
 
         final String finalFullPrefix = fullPrefix;
-        return s3client.listObjectsV2Paginator(req).contents().stream()
-                .map(S3Object::key)
-                .filter(key -> !key.equals(finalFullPrefix) && !key.endsWith("/"))
-                .map(k -> keyToRelativeArray(k, finalFullPrefix));
+        return s3client.listObjectsV2Paginator(req).contents().stream().map(S3Object::key).filter(key -> !key.equals(
+                finalFullPrefix) && !key.endsWith("/")).map(k -> keyToRelativeArray(k, finalFullPrefix));
     }
 
     @Override
@@ -165,22 +146,17 @@ public class S3Store implements Store, Store.ListableStore {
             fullPrefix += "/";
         }
 
-        ListObjectsV2Request req = ListObjectsV2Request.builder()
-                .bucket(bucketName)
-                .prefix(fullPrefix)
-                .delimiter("/")
-                .build();
+        ListObjectsV2Request req = ListObjectsV2Request.builder().bucket(bucketName).prefix(fullPrefix).delimiter(
+                "/").build();
 
         ListObjectsV2Response res = s3client.listObjectsV2(req);
 
         // Combine CommonPrefixes (folders) and Contents (files)
         Stream<String> folders = res.commonPrefixes().stream().map(CommonPrefix::prefix);
         final String finalFullPrefix = fullPrefix;
-        Stream<String> files = res.contents().stream().map(S3Object::key)
-                .filter(key -> !key.equals(finalFullPrefix));
+        Stream<String> files = res.contents().stream().map(S3Object::key).filter(key -> !key.equals(finalFullPrefix));
 
-        return Stream.concat(folders, files)
-                .map(k -> keyToRelativeArray(k, finalFullPrefix)[0]);
+        return Stream.concat(folders, files).map(k -> keyToRelativeArray(k, finalFullPrefix)[0]);
     }
 
     /**
@@ -208,20 +184,15 @@ public class S3Store implements Store, Store.ListableStore {
 
     @Override
     public InputStream getInputStream(String[] keys, long start, long end) {
-        GetObjectRequest req = GetObjectRequest.builder()
-                .bucket(bucketName)
-                .key(resolveKeys(keys))
-                .range(String.format("bytes=%d-%d", start, end - 1)) // S3 range is inclusive
-                .build();
+        GetObjectRequest req = GetObjectRequest.builder().bucket(bucketName).key(resolveKeys(keys)).range(String.format(
+                "bytes=%d-%d", start, end - 1)) // S3 range is inclusive
+                                               .build();
         return s3client.getObject(req);
     }
 
     @Override
     public long getSize(String[] keys) {
-        HeadObjectRequest req = HeadObjectRequest.builder()
-                .bucket(bucketName)
-                .key(resolveKeys(keys))
-                .build();
+        HeadObjectRequest req = HeadObjectRequest.builder().bucket(bucketName).key(resolveKeys(keys)).build();
         try {
             return s3client.headObject(req).contentLength();
         } catch (NoSuchKeyException e) {

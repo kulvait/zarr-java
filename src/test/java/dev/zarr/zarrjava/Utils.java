@@ -52,8 +52,7 @@ public class Utils {
      */
     public static void unzipFile(Path sourceZip, Path targetDir) throws IOException {
         Files.createDirectories(targetDir);
-        try (FileInputStream fis = new FileInputStream(sourceZip.toFile());
-             ZipInputStream zis = new ZipInputStream(fis)) {
+        try (FileInputStream fis = new FileInputStream(sourceZip.toFile()); ZipInputStream zis = new ZipInputStream(fis)) {
             ZipEntry entry;
             while ((entry = zis.getNextEntry()) != null) {
                 Path outPath = targetDir.resolve(entry.getName()).normalize();

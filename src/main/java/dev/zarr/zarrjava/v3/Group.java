@@ -194,9 +194,8 @@ public class Group extends dev.zarr.zarrjava.core.Group implements Node {
 
     @Override
     public Stream<dev.zarr.zarrjava.core.Node> list() {
-        Stream<String[]> metadataKeys = storeHandle.list()
-                .filter(key -> key[key.length - 1].equals(ZARR_JSON))
-                .filter(key -> key.length > 1); // exclude root from list
+        Stream<String[]> metadataKeys = storeHandle.list().filter(key -> key[key.length - 1].equals(ZARR_JSON)).filter(
+                key -> key.length > 1); // exclude root from list
         return metadataKeys.map(key -> {
             try {
                 return get(Arrays.copyOf(key, key.length - 1));

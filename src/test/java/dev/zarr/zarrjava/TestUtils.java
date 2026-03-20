@@ -36,9 +36,7 @@ public class TestUtils {
         long[] selOffset = new long[]{50, 20};
         long[] selShape = new long[]{20, 1};
         long[][] chunkCoords = computeChunkCoords(arrayShape, chunkShape, selOffset, selShape);
-        long[][] expectedChunkCoords = new long[][]{
-                {1, 0},
-                {2, 0},
+        long[][] expectedChunkCoords = new long[][]{{1, 0}, {2, 0},
         };
         Assertions.assertArrayEquals(expectedChunkCoords, chunkCoords);
 
@@ -47,10 +45,7 @@ public class TestUtils {
         selOffset = new long[]{0, 32};
         selShape = new long[]{1, 20};
         chunkCoords = computeChunkCoords(arrayShape, chunkShape, selOffset, selShape);
-        expectedChunkCoords = new long[][]{
-                {0, 1},
-                {0, 2},
-                {0, 3},
+        expectedChunkCoords = new long[][]{{0, 1}, {0, 2}, {0, 3},
         };
         Assertions.assertArrayEquals(expectedChunkCoords, chunkCoords);
     }

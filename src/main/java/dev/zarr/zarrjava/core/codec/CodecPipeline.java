@@ -17,8 +17,7 @@ public class CodecPipeline {
 
     public CodecPipeline(@Nonnull Codec[] codecs, CoreArrayMetadata arrayMetadata) throws ZarrException {
         this.arrayMetadata = arrayMetadata;
-        long arrayBytesCodecCount = Arrays.stream(codecs).filter(c -> c instanceof ArrayBytesCodec)
-                .count();
+        long arrayBytesCodecCount = Arrays.stream(codecs).filter(c -> c instanceof ArrayBytesCodec).count();
         if (arrayBytesCodecCount != 1) {
             throw new ZarrException(
                     "Exactly 1 ArrayBytesCodec is required. Found " + arrayBytesCodecCount + ".");
@@ -29,23 +28,19 @@ public class CodecPipeline {
             if (prevCodec != null) {
                 if (codec instanceof ArrayBytesCodec && prevCodec instanceof ArrayBytesCodec) {
                     throw new ZarrException(
-                            "ArrayBytesCodec '" + codec.getClass() + "' cannot follow after ArrayBytesCodec '" +
-                                    prevCodec.getClass() + "' because only 1 ArrayBytesCodec is allowed.");
+                            "ArrayBytesCodec '" + codec.getClass() + "' cannot follow after ArrayBytesCodec '" + prevCodec.getClass() + "' because only 1 ArrayBytesCodec is allowed.");
                 }
                 if (codec instanceof ArrayBytesCodec && prevCodec instanceof BytesBytesCodec) {
                     throw new ZarrException(
-                            "ArrayBytesCodec '" + codec.getClass() + "' cannot follow after BytesBytesCodec '" +
-                                    prevCodec.getClass() + "'.");
+                            "ArrayBytesCodec '" + codec.getClass() + "' cannot follow after BytesBytesCodec '" + prevCodec.getClass() + "'.");
                 }
                 if (codec instanceof ArrayArrayCodec && prevCodec instanceof ArrayBytesCodec) {
                     throw new ZarrException(
-                            "ArrayArrayCodec '" + codec.getClass() + "' cannot follow after ArrayBytesCodec '" +
-                                    prevCodec.getClass() + "'.");
+                            "ArrayArrayCodec '" + codec.getClass() + "' cannot follow after ArrayBytesCodec '" + prevCodec.getClass() + "'.");
                 }
                 if (codec instanceof ArrayArrayCodec && prevCodec instanceof BytesBytesCodec) {
                     throw new ZarrException(
-                            "ArrayArrayCodec '" + codec.getClass() + "' cannot follow after BytesBytesCodec '" +
-                                    prevCodec.getClass() + "'.");
+                            "ArrayArrayCodec '" + codec.getClass() + "' cannot follow after BytesBytesCodec '" + prevCodec.getClass() + "'.");
                 }
             }
             codec.setCoreArrayMetadata(codecArrayMetadata);
@@ -57,9 +52,7 @@ public class CodecPipeline {
     }
 
     ArrayArrayCodec[] getArrayArrayCodecs() {
-        return Arrays.stream(codecs)
-                .filter(c -> c instanceof ArrayArrayCodec)
-                .toArray(ArrayArrayCodec[]::new);
+        return Arrays.stream(codecs).filter(c -> c instanceof ArrayArrayCodec).toArray(ArrayArrayCodec[]::new);
     }
 
     ArrayBytesCodec getArrayBytesCodec() {
@@ -69,14 +62,11 @@ public class CodecPipeline {
             }
         }
         throw new IllegalStateException(
-                "No ArrayBytesCodec found in codec pipeline. This should never happen as the existence " +
-                "of exactly 1 ArrayBytesCodec is validated during construction.");
+                "No ArrayBytesCodec found in codec pipeline. This should never happen as the existence " + "of exactly 1 ArrayBytesCodec is validated during construction.");
     }
 
     BytesBytesCodec[] getBytesBytesCodecs() {
-        return Arrays.stream(codecs)
-                .filter(c -> c instanceof BytesBytesCodec)
-                .toArray(BytesBytesCodec[]::new);
+        return Arrays.stream(codecs).filter(c -> c instanceof BytesBytesCodec).toArray(BytesBytesCodec[]::new);
     }
 
     public boolean supportsPartialDecode() {
@@ -85,8 +75,7 @@ public class CodecPipeline {
 
     @Nonnull
     public Array decodePartial(
-            @Nonnull StoreHandle storeHandle,
-            long[] offset, int[] shape
+                               @Nonnull StoreHandle storeHandle, long[] offset, int[] shape
     ) throws ZarrException {
         if (!supportsPartialDecode()) {
             throw new ZarrException(
@@ -102,7 +91,7 @@ public class CodecPipeline {
 
     @Nonnull
     public Array decode(
-            @Nonnull ByteBuffer chunkBytes
+                        @Nonnull ByteBuffer chunkBytes
     ) throws ZarrException {
         if (chunkBytes == null) {
             throw new ZarrException("chunkBytes is null. Ohh nooo.");
@@ -138,7 +127,7 @@ public class CodecPipeline {
 
     @Nonnull
     public ByteBuffer encode(
-            @Nonnull Array chunkArray
+                             @Nonnull Array chunkArray
     ) throws ZarrException {
         for (ArrayArrayCodec codec : getArrayArrayCodecs()) {
             chunkArray = codec.encode(chunkArray);
@@ -152,8 +141,7 @@ public class CodecPipeline {
         return chunkBytes;
     }
 
-    public long computeEncodedSize(long inputByteLength, CoreArrayMetadata arrayMetadata)
-            throws ZarrException {
+    public long computeEncodedSize(long inputByteLength, CoreArrayMetadata arrayMetadata) throws ZarrException {
         for (Codec codec : codecs) {
             inputByteLength = codec.computeEncodedSize(inputByteLength, arrayMetadata);
         }

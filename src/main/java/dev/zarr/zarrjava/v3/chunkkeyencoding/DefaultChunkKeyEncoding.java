@@ -19,7 +19,7 @@ public class DefaultChunkKeyEncoding extends ChunkKeyEncoding {
 
     @JsonCreator
     public DefaultChunkKeyEncoding(
-            @JsonProperty(value = "configuration") Configuration configuration
+                                   @JsonProperty(value = "configuration") Configuration configuration
     ) {
         if (configuration == null) {
             this.configuration = new Configuration(Separator.SLASH);
@@ -31,8 +31,7 @@ public class DefaultChunkKeyEncoding extends ChunkKeyEncoding {
 
     @Override
     public String[] encodeChunkKey(long[] chunkCoords) {
-        Stream<String> keys = Stream.concat(Stream.of("c"), Arrays.stream(chunkCoords)
-                .mapToObj(Long::toString));
+        Stream<String> keys = Stream.concat(Stream.of("c"), Arrays.stream(chunkCoords).mapToObj(Long::toString));
         if (configuration.separator == Separator.SLASH) {
             return keys.toArray(String[]::new);
         }
@@ -46,7 +45,7 @@ public class DefaultChunkKeyEncoding extends ChunkKeyEncoding {
 
         @JsonCreator
         public Configuration(
-                @Nonnull @JsonProperty(value = "separator", defaultValue = "/") Separator separator) {
+                             @Nonnull @JsonProperty(value = "separator", defaultValue = "/") Separator separator) {
             this.separator = separator;
         }
     }

@@ -70,9 +70,8 @@ public class MemoryStore implements Store, Store.ListableStore {
         List<String> prefixList = resolveKeys(prefix);
         int prefixSize = prefixList.size();
 
-        return map.keySet().stream()
-                .filter(key -> key.size() >= prefixSize && key.subList(0, prefixSize).equals(prefixList))
-                .map(key -> key.subList(prefixSize, key.size()).toArray(new String[0]));
+        return map.keySet().stream().filter(key -> key.size() >= prefixSize && key.subList(0, prefixSize).equals(
+                prefixList)).map(key -> key.subList(prefixSize, key.size()).toArray(new String[0]));
     }
 
     @Override
@@ -80,10 +79,8 @@ public class MemoryStore implements Store, Store.ListableStore {
         List<String> prefixList = resolveKeys(prefix);
         int prefixSize = prefixList.size();
 
-        return map.keySet().stream()
-                .filter(key -> key.size() > prefixSize && key.subList(0, prefixSize).equals(prefixList))
-                .map(key -> key.get(prefixSize))
-                .distinct();
+        return map.keySet().stream().filter(key -> key.size() > prefixSize && key.subList(0, prefixSize).equals(
+                prefixList)).map(key -> key.get(prefixSize)).distinct();
     }
 
     @Nonnull

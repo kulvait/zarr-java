@@ -23,13 +23,11 @@ public class ZarrTest {
     public static void clearTestoutputFolder() throws IOException {
         if (Files.exists(TESTOUTPUT)) {
             try (Stream<Path> walk = Files.walk(TESTOUTPUT)) {
-                walk.sorted(Comparator.reverseOrder())
-                        .map(Path::toFile)
-                        .forEach(file -> {
-                            if (!file.delete()) {
-                                throw new RuntimeException("Failed to delete file: " + file.getAbsolutePath());
-                            }
-                        });
+                walk.sorted(Comparator.reverseOrder()).map(Path::toFile).forEach(file -> {
+                    if (!file.delete()) {
+                        throw new RuntimeException("Failed to delete file: " + file.getAbsolutePath());
+                    }
+                });
             }
         }
         Files.createDirectory(TESTOUTPUT);
@@ -89,36 +87,42 @@ public class ZarrTest {
     }
 
     protected Attributes defaultTestAttributes() {
-        return new Attributes() {{
-            put("string", "stringvalue");
-            put("int", 42);
-            put("float", 0.5f);
-            put("double", 3.14);
-            put("boolean", true);
-            put("list", new ArrayList<Object>() {
-                {
-                    add(1);
-                    add(2.0d);
-                    add("string");
-                }
-            });
-            put("int_array", new int[]{1, 2, 3});
-            put("long_array", new long[]{1, 2, 3});
-            put("double_array", new double[]{1.0, 2.0, 3.0});
-            put("float_array", new float[]{1.0f, 2.0f, 3.0f});
-            put("boolean_array", new boolean[]{true, false, true});
-            put("nested", new Attributes() {{
-                put("element", "value");
-            }});
-            put("array_of_attributes", new Attributes[]{
-                    new Attributes() {{
+        return new Attributes() {
+            {
+                put("string", "stringvalue");
+                put("int", 42);
+                put("float", 0.5f);
+                put("double", 3.14);
+                put("boolean", true);
+                put("list", new ArrayList<Object>() {
+                    {
+                        add(1);
+                        add(2.0d);
+                        add("string");
+                    }
+                });
+                put("int_array", new int[]{1, 2, 3});
+                put("long_array", new long[]{1, 2, 3});
+                put("double_array", new double[]{1.0, 2.0, 3.0});
+                put("float_array", new float[]{1.0f, 2.0f, 3.0f});
+                put("boolean_array", new boolean[]{true, false, true});
+                put("nested", new Attributes() {
+                    {
+                        put("element", "value");
+                    }
+                });
+                put("array_of_attributes", new Attributes[]{new Attributes() {
+                    {
                         put("a", 1);
-                    }},
-                    new Attributes() {{
+                    }
+                }, new Attributes() {
+                    {
                         put("b", 2);
-                    }}
-            });
-        }};
+                    }
+                }
+                });
+            }
+        };
     }
 
     protected void assertContainsTestAttributes(Attributes attributes) throws ZarrException {
@@ -141,13 +145,15 @@ public class ZarrTest {
         Assertions.assertArrayEquals(new boolean[]{true, false, true}, attributes.getBooleanArray("boolean_array"));
         Assertions.assertEquals("value", attributes.getAttributes("nested").getString("element"));
         Assertions.assertArrayEquals(
-                new Attributes[]{
-                        new Attributes() {{
-                            put("a", 1);
-                        }},
-                        new Attributes() {{
-                            put("b", 2);
-                        }}
+                new Attributes[]{new Attributes() {
+                    {
+                        put("a", 1);
+                    }
+                }, new Attributes() {
+                    {
+                        put("b", 2);
+                    }
+                }
                 },
                 attributes.getArray("array_of_attributes", Attributes.class)
         );

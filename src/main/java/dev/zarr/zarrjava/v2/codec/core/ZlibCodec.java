@@ -26,7 +26,7 @@ public class ZlibCodec extends BytesBytesCodec implements Codec {
 
     @JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
     public ZlibCodec(
-            @JsonProperty(value = "level", defaultValue = "1") int level) throws ZarrException {
+                     @JsonProperty(value = "level", defaultValue = "1") int level) throws ZarrException {
         if (level < 0 || level > 9) {
             throw new ZarrException("'level' needs to be between 0 and 9.");
         }
@@ -48,8 +48,7 @@ public class ZlibCodec extends BytesBytesCodec implements Codec {
 
     @Override
     public ByteBuffer encode(ByteBuffer chunkBytes) throws ZarrException {
-        try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-             DeflaterOutputStream dos = new DeflaterOutputStream(outputStream, new Deflater(this.level))) {
+        try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream(); DeflaterOutputStream dos = new DeflaterOutputStream(outputStream, new Deflater(this.level))) {
             dos.write(Utils.toArray(chunkBytes));
             dos.close();
             return ByteBuffer.wrap(outputStream.toByteArray());

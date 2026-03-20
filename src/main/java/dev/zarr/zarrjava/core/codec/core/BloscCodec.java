@@ -18,8 +18,7 @@ import java.nio.ByteBuffer;
 public abstract class BloscCodec extends BytesBytesCodec {
 
     @Override
-    public ByteBuffer decode(ByteBuffer chunkBytes)
-            throws ZarrException {
+    public ByteBuffer decode(ByteBuffer chunkBytes) throws ZarrException {
         try {
             return ByteBuffer.wrap(Blosc.decompress(Utils.toArray(chunkBytes)));
         } catch (Exception ex) {
@@ -38,15 +37,12 @@ public abstract class BloscCodec extends BytesBytesCodec {
         }
 
         @Override
-        public Blosc.Compressor deserialize(JsonParser jsonParser, DeserializationContext ctxt)
-                throws IOException {
-            String cname = jsonParser.getCodec()
-                    .readValue(jsonParser, String.class);
+        public Blosc.Compressor deserialize(JsonParser jsonParser, DeserializationContext ctxt) throws IOException {
+            String cname = jsonParser.getCodec().readValue(jsonParser, String.class);
             Blosc.Compressor compressor = Blosc.Compressor.fromString(cname);
             if (compressor == null) {
                 throw new JsonParseException(
-                        jsonParser,
-                        String.format("Could not parse the Blosc.Compressor. Got '%s'", cname)
+                        jsonParser, String.format("Could not parse the Blosc.Compressor. Got '%s'", cname)
                 );
             }
             return compressor;
@@ -64,9 +60,7 @@ public abstract class BloscCodec extends BytesBytesCodec {
         }
 
         @Override
-        public void serialize(Blosc.Compressor compressor, JsonGenerator generator,
-                              SerializerProvider provider)
-                throws IOException {
+        public void serialize(Blosc.Compressor compressor, JsonGenerator generator, SerializerProvider provider) throws IOException {
             generator.writeString(compressor.getValue());
         }
     }

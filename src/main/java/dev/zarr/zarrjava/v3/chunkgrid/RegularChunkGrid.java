@@ -16,7 +16,7 @@ public class RegularChunkGrid extends ChunkGrid {
 
     @JsonCreator
     public RegularChunkGrid(
-            @Nonnull @JsonProperty(value = "configuration", required = true) Configuration configuration
+                            @Nonnull @JsonProperty(value = "configuration", required = true) Configuration configuration
     ) {
         this.configuration = configuration;
     }
@@ -29,7 +29,7 @@ public class RegularChunkGrid extends ChunkGrid {
 
         @JsonCreator
         public Configuration(
-                @Nonnull @JsonProperty(value = "chunk_shape", required = true) int[] chunkShape) {
+                             @Nonnull @JsonProperty(value = "chunk_shape", required = true) int[] chunkShape) {
             this.chunkShape = chunkShape;
         }
     }

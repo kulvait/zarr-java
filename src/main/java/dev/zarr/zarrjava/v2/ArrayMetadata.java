@@ -51,31 +51,14 @@ public class ArrayMetadata extends dev.zarr.zarrjava.core.ArrayMetadata {
 
     @JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
     public ArrayMetadata(
-            @JsonProperty(value = "zarr_format", required = true) int zarrFormat,
-            @JsonProperty(value = "shape", required = true) long[] shape,
-            @JsonProperty(value = "chunks", required = true) int[] chunks,
-            @JsonProperty(value = "dtype", required = true) DataType dataType,
-            @Nullable @JsonProperty(value = "fill_value", required = true) Object fillValue,
-            @JsonProperty(value = "order", required = true) Order order,
-            @Nullable @JsonProperty(value = "filters", required = true) Codec[] filters,
-            @Nullable @JsonProperty(value = "compressor", required = true) Codec compressor,
-            @Nullable @JsonProperty(value = "dimension_separator") Separator dimensionSeparator
+                         @JsonProperty(value = "zarr_format", required = true) int zarrFormat, @JsonProperty(value = "shape", required = true) long[] shape, @JsonProperty(value = "chunks", required = true) int[] chunks, @JsonProperty(value = "dtype", required = true) DataType dataType, @Nullable @JsonProperty(value = "fill_value", required = true) Object fillValue, @JsonProperty(value = "order", required = true) Order order, @Nullable @JsonProperty(value = "filters", required = true) Codec[] filters, @Nullable @JsonProperty(value = "compressor", required = true) Codec compressor, @Nullable @JsonProperty(value = "dimension_separator") Separator dimensionSeparator
     ) throws ZarrException {
         this(zarrFormat, shape, chunks, dataType, fillValue, order, filters, compressor, dimensionSeparator, null);
     }
 
 
     public ArrayMetadata(
-            int zarrFormat,
-            long[] shape,
-            int[] chunks,
-            DataType dataType,
-            @Nullable Object fillValue,
-            Order order,
-            @Nullable Codec[] filters,
-            @Nullable Codec compressor,
-            @Nullable Separator dimensionSeparator,
-            @Nullable Attributes attributes
+                         int zarrFormat, long[] shape, int[] chunks, DataType dataType, @Nullable Object fillValue, Order order, @Nullable Codec[] filters, @Nullable Codec compressor, @Nullable Separator dimensionSeparator, @Nullable Attributes attributes
     ) throws ZarrException {
         super(shape, fillValue, dataType);
         if (zarrFormat != this.zarrFormat) {
@@ -87,11 +70,8 @@ public class ArrayMetadata extends dev.zarr.zarrjava.core.ArrayMetadata {
         this.endianness = dataType.getEndianness();
         this.order = order;
         this.dimensionSeparator = dimensionSeparator;
-        this.coreArrayMetadata =
-                new CoreArrayMetadata(shape, chunks,
-                        this.dataType,
-                        this.parsedFillValue
-                );
+        this.coreArrayMetadata = new CoreArrayMetadata(shape, chunks, this.dataType, this.parsedFillValue
+        );
         if (filters == null) this.filters = null;
         else {
             this.filters = new Codec[filters.length];

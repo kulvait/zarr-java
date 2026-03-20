@@ -32,9 +32,7 @@ public abstract class ZipStore implements Store, Store.ListableStore {
             int commentLen = bufArray[i + 20] + bufArray[i + 21] * 256;
             int realLen = buffLen - i - 22;
             if (commentLen != realLen) {
-                throw new IOException("ZIP comment size mismatch: "
-                        + "directory says len is " + commentLen
-                        + ", but file ends after " + realLen + " bytes!");
+                throw new IOException("ZIP comment size mismatch: " + "directory says len is " + commentLen + ", but file ends after " + realLen + " bytes!");
             }
             return new String(bufArray, i + 22, commentLen);
         }

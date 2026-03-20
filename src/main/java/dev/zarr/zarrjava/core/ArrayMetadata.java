@@ -29,14 +29,13 @@ public abstract class ArrayMetadata {
         this.parsedFillValue = parseFillValue(fillValue, dataType);
     }
 
-    public static Object parseFillValue(Object fillValue, @Nonnull DataType dataType)
-            throws ZarrException {
+    public static Object parseFillValue(Object fillValue, @Nonnull DataType dataType) throws ZarrException {
         if (fillValue == null) {
             return null;
         }
         boolean dataTypeIsBool = dataType == dev.zarr.zarrjava.v3.DataType.BOOL || dataType == dev.zarr.zarrjava.v2.DataType.BOOL;
         boolean dataTypeIsByte = dataType == dev.zarr.zarrjava.v3.DataType.INT8 || dataType == dev.zarr.zarrjava.v2.DataType.INT8 || dataType == dev.zarr.zarrjava.v3.DataType.UINT8 || dataType == dev.zarr.zarrjava.v2.DataType.UINT8;
-        boolean dataTypeIsShort = dataType == dev.zarr.zarrjava.v3.DataType.INT16 || dataType == dev.zarr.zarrjava.v2.DataType.INT16 || dataType == dev.zarr.zarrjava.v2.DataType.INT16_BE || dataType == dev.zarr.zarrjava.v3.DataType.UINT16 || dataType == dev.zarr.zarrjava.v2.DataType.UINT16|| dataType == dev.zarr.zarrjava.v2.DataType.UINT16_BE;
+        boolean dataTypeIsShort = dataType == dev.zarr.zarrjava.v3.DataType.INT16 || dataType == dev.zarr.zarrjava.v2.DataType.INT16 || dataType == dev.zarr.zarrjava.v2.DataType.INT16_BE || dataType == dev.zarr.zarrjava.v3.DataType.UINT16 || dataType == dev.zarr.zarrjava.v2.DataType.UINT16 || dataType == dev.zarr.zarrjava.v2.DataType.UINT16_BE;
         boolean dataTypeIsInt = dataType == dev.zarr.zarrjava.v3.DataType.INT32 || dataType == dev.zarr.zarrjava.v2.DataType.INT32 || dataType == dev.zarr.zarrjava.v2.DataType.INT32_BE || dataType == dev.zarr.zarrjava.v3.DataType.UINT32 || dataType == dev.zarr.zarrjava.v2.DataType.UINT32 || dataType == dev.zarr.zarrjava.v2.DataType.UINT32_BE;
         boolean dataTypeIsLong = dataType == dev.zarr.zarrjava.v3.DataType.INT64 || dataType == dev.zarr.zarrjava.v2.DataType.INT64 || dataType == dev.zarr.zarrjava.v2.DataType.INT64_BE || dataType == dev.zarr.zarrjava.v3.DataType.UINT64 || dataType == dev.zarr.zarrjava.v2.DataType.UINT64 || dataType == dev.zarr.zarrjava.v2.DataType.UINT64_BE;
         boolean dataTypeIsFloat = dataType == dev.zarr.zarrjava.v3.DataType.FLOAT32 || dataType == dev.zarr.zarrjava.v2.DataType.FLOAT32 || dataType == dev.zarr.zarrjava.v2.DataType.FLOAT32_BE;
@@ -148,8 +147,7 @@ public abstract class ArrayMetadata {
 
     public abstract Object parsedFillValue();
 
-    public @Nonnull
-    abstract Attributes attributes() throws ZarrException;
+    public @Nonnull abstract Attributes attributes() throws ZarrException;
 
     public static final class CoreArrayMetadata {
 
@@ -158,8 +156,7 @@ public abstract class ArrayMetadata {
         public final DataType dataType;
         public final Object parsedFillValue;
 
-        public CoreArrayMetadata(long[] shape, int[] chunkShape, DataType dataType,
-                                 Object parsedFillValue) {
+        public CoreArrayMetadata(long[] shape, int[] chunkShape, DataType dataType, Object parsedFillValue) {
             this.shape = shape;
             this.chunkShape = chunkShape;
             this.dataType = dataType;
@@ -171,8 +168,7 @@ public abstract class ArrayMetadata {
         }
 
         public int chunkSize() {
-            return Arrays.stream(chunkShape)
-                    .reduce(1, (acc, a) -> acc * a);
+            return Arrays.stream(chunkShape).reduce(1, (acc, a) -> acc * a);
         }
 
         public int chunkByteLength() {

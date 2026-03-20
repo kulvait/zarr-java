@@ -20,7 +20,7 @@ import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.Enumeration;
-//Java logging for debugging
+// Java logging for debugging
 import java.util.logging.Logger;
 import java.util.logging.Level;
 
@@ -30,7 +30,7 @@ import java.util.logging.Level;
  * its contents into a buffer store first making it more efficient for read-only access to large zip archives.
  */
 public class ReadOnlyZipStore extends ZipStore {
-private static final Logger logger = Logger.getLogger(ReadOnlyZipStore.class.getName());
+    private static final Logger logger = Logger.getLogger(ReadOnlyZipStore.class.getName());
 
     private Map<String, Long> fileIndex;
     private Set<String> directoryIndex;
@@ -45,7 +45,7 @@ private static final Logger logger = Logger.getLogger(ReadOnlyZipStore.class.get
     // Convenience constructor for filesystem paths
     public ReadOnlyZipStore(@Nonnull Path zipPath) {
         this(new FilesystemStore(zipPath.getParent()).resolve(
-                                                              zipPath.getFileName().toString()));
+                zipPath.getFileName().toString()));
     }
 
     // Convenience constructor for string paths
@@ -76,22 +76,23 @@ private static final Logger logger = Logger.getLogger(ReadOnlyZipStore.class.get
             }
         } catch (IOException e) {
             throw StoreException.readFailed(
-                                            underlyingStore.toString(), new String[]{}, new IOException("Failed to read ZIP directory from underlying store", e));
+                    underlyingStore.toString(), new String[]{},
+                    new IOException("Failed to read ZIP directory from underlying store", e));
         }
         isCached = true;
     }
 
 // Helper method to add parent directories of a file entry to the directory index
-private void addParentDirs(String entryName, Set<String> dirIndex) {
-    int lastSlash = entryName.lastIndexOf('/'); // Find the last '/' in the file name
-    while (lastSlash > 0) {                      // Keep going until no more slashes are found
-        String parentDir = entryName.substring(0, lastSlash + 1); // Extract the parent directory path
-        if (!dirIndex.add(parentDir)) {          // Add the parent to the directory index if it’s not already added
-            break; // Exit if this parent directory has already been added
+    private void addParentDirs(String entryName, Set<String> dirIndex) {
+        int lastSlash = entryName.lastIndexOf('/'); // Find the last '/' in the file name
+        while (lastSlash > 0) {                      // Keep going until no more slashes are found
+            String parentDir = entryName.substring(0, lastSlash + 1); // Extract the parent directory path
+            if (!dirIndex.add(parentDir)) {          // Add the parent to the directory index if it’s not already added
+                break; // Exit if this parent directory has already been added
+            }
+            lastSlash = entryName.lastIndexOf('/', lastSlash - 1); // Move the search for slashes up
         }
-        lastSlash = entryName.lastIndexOf('/', lastSlash - 1); // Move the search for slashes up
     }
-}
 
     private synchronized void ensureCacheNew() {
         fileIndex = new LinkedHashMap<>();
@@ -101,7 +102,7 @@ private void addParentDirs(String entryName, Set<String> dirIndex) {
         final Path zipStorePath;
         try {
             zipStorePath = underlyingStore.toPath(); // throws if not FilesystemStore
-			System.out.println("Resolved underlying store to filesystem path: " + zipStorePath);
+            System.out.println("Resolved underlying store to filesystem path: " + zipStorePath);
         } catch (Exception e) {
             // Fallback to original sequential scan
             System.out.println("Fast path failed, falling back to original ensureCache");
@@ -144,7 +145,8 @@ private void addParentDirs(String entryName, Set<String> dirIndex) {
             } catch (RuntimeException re) {
                 // Surface the better error (central dir attempt) with context if both fail
                 throw StoreException.readFailed(
-                                                underlyingStore.toString(), new String[]{}, new IOException("Failed to read ZIP central directory from filesystem path", io)
+                        underlyingStore.toString(), new String[]{},
+                        new IOException("Failed to read ZIP central directory from filesystem path", io)
                 );
             }
         }
@@ -160,16 +162,16 @@ private void addParentDirs(String entryName, Set<String> dirIndex) {
         //endTime = System.currentTimeMillis();
         //System.out.println("END ensureCacheOriginal() in " + (endTime - startTime) + " ms");
 
-logger.log(Level.INFO, "Starting ensureCacheNew() for underlying store: {0}", underlyingStore.toString());
+        logger.log(Level.INFO, "Starting ensureCacheNew() for underlying store: {0}", underlyingStore.toString());
         startTime = System.currentTimeMillis();
         // swap to test the new implementation:
         ensureCacheNew(); // or ensureCacheOriginal()
         endTime = System.currentTimeMillis();
-		logger.log(Level.INFO, "ensureCacheNew() completed in {0} ms", (endTime - startTime));
-System.out.println("Cache contents after ensureCache, fileIndex:");
-System.out.println(fileIndex);
-System.out.println("Cache contents after ensureCache, directoryIndex:");
-System.out.println(directoryIndex);
+        logger.log(Level.INFO, "ensureCacheNew() completed in {0} ms", (endTime - startTime));
+        System.out.println("Cache contents after ensureCache, fileIndex:");
+        System.out.println(fileIndex);
+        System.out.println("Cache contents after ensureCache, directoryIndex:");
+        System.out.println(directoryIndex);
     }
 
     String resolveKeys(String[] keys) {
@@ -235,7 +237,8 @@ System.out.println(directoryIndex);
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
                 byte[] bufferArray = new byte[8192];
                 int len;
-                while (bytesToRead > 0 && (len = zis.read(bufferArray, 0, (int) Math.min(bufferArray.length, bytesToRead))) != -1) {
+                while (bytesToRead > 0 && (len = zis.read(bufferArray, 0, (int) Math.min(bufferArray.length,
+                        bytesToRead))) != -1) {
                     baos.write(bufferArray, 0, len);
                     bytesToRead -= len;
                 }
@@ -372,7 +375,8 @@ System.out.println(directoryIndex);
         InputStream inputStream = underlyingStore.getInputStream();
         if (inputStream == null) {
             throw StoreException.readFailed(
-                                            underlyingStore.toString(), keys, new IOException("Cannot get size - underlying store input stream is null"));
+                    underlyingStore.toString(), keys,
+                    new IOException("Cannot get size - underlying store input stream is null"));
         }
         try (ZipArchiveInputStream zis = new ZipArchiveInputStream(inputStream)) {
             ZipArchiveEntry entry;
@@ -400,7 +404,8 @@ System.out.println(directoryIndex);
             return -1; // file not found
         } catch (IOException e) {
             throw StoreException.readFailed(
-                                            underlyingStore.toString(), keys, new IOException("Failed to read ZIP entry size for key: " + String.join("/", keys), e));
+                    underlyingStore.toString(), keys,
+                    new IOException("Failed to read ZIP entry size for key: " + String.join("/", keys), e));
         }
     }
 }

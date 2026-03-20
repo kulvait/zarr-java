@@ -13,8 +13,7 @@ public class IndexingUtils {
         return computeChunkCoords(Utils.toLongArray(arrayShape), chunkShape);
     }
 
-    public static long[][] computeChunkCoords(long[] arrayShape, int[] chunkShape, long[] selOffset,
-                                              long[] selShape) {
+    public static long[][] computeChunkCoords(long[] arrayShape, int[] chunkShape, long[] selOffset, long[] selShape) {
         final int ndim = arrayShape.length;
         long[] start = new long[ndim];
         long[] end = new long[ndim];
@@ -50,22 +49,18 @@ public class IndexingUtils {
         return chunkCoords;
     }
 
-    public static ChunkProjection computeProjection(long[] chunkCoords, int[] arrayShape,
-                                                    int[] chunkShape) {
+    public static ChunkProjection computeProjection(long[] chunkCoords, int[] arrayShape, int[] chunkShape) {
         return computeProjection(chunkCoords, Utils.toLongArray(arrayShape), chunkShape);
     }
 
-    public static ChunkProjection computeProjection(long[] chunkCoords, long[] arrayShape,
-                                                    int[] chunkShape) {
+    public static ChunkProjection computeProjection(long[] chunkCoords, long[] arrayShape, int[] chunkShape) {
         return computeProjection(chunkCoords, arrayShape, chunkShape, new long[chunkCoords.length],
                 arrayShape
         );
     }
 
     public static ChunkProjection computeProjection(
-            final long[] chunkCoords, final long[] arrayShape,
-            final int[] chunkShape, final long[] selOffset,
-            final long[] selShape
+                                                    final long[] chunkCoords, final long[] arrayShape, final int[] chunkShape, final long[] selOffset, final long[] selShape
     ) {
         final int ndim = chunkCoords.length;
         final int[] chunkOffset = new int[ndim];
@@ -116,8 +111,7 @@ public class IndexingUtils {
         return new ChunkProjection(chunkCoords, chunkOffset, outOffset, shape);
     }
 
-    public static boolean isFullChunk(final int[] selOffset, final int[] selShape,
-                                      final int[] chunkShape) {
+    public static boolean isFullChunk(final int[] selOffset, final int[] selShape, final int[] chunkShape) {
         if (selOffset.length != selShape.length) {
             throw new IllegalArgumentException("'selOffset' and 'selShape' need to have the same rank.");
         }
@@ -134,8 +128,7 @@ public class IndexingUtils {
         return true;
     }
 
-    public static boolean isSingleFullChunk(final long[] selOffset, final long[] selShape,
-                                            final int[] chunkShape) {
+    public static boolean isSingleFullChunk(final long[] selOffset, final long[] selShape, final int[] chunkShape) {
         if (selOffset.length != selShape.length) {
             throw new IllegalArgumentException("'selOffset' and 'selShape' need to have the same rank.");
         }
@@ -172,8 +165,7 @@ public class IndexingUtils {
         final public int[] shape;
 
         public ChunkProjection(
-                final long[] chunkCoords, final int[] chunkOffset, final int[] outOffset,
-                final int[] shape
+                               final long[] chunkCoords, final int[] chunkOffset, final int[] outOffset, final int[] shape
         ) {
             this.chunkCoords = chunkCoords;
             this.chunkOffset = chunkOffset;
@@ -183,12 +175,9 @@ public class IndexingUtils {
 
         @Override
         public String toString() {
-            return "ChunkProjection{" +
-                    "chunkCoords=" + Arrays.toString(chunkCoords) +
-                    ", chunkOffset=" + Arrays.toString(chunkOffset) +
-                    ", outOffset=" + Arrays.toString(outOffset) +
-                    ", shape=" + Arrays.toString(shape) +
-                    '}';
+            return "ChunkProjection{" + "chunkCoords=" + Arrays.toString(
+                    chunkCoords) + ", chunkOffset=" + Arrays.toString(chunkOffset) + ", outOffset=" + Arrays.toString(
+                            outOffset) + ", shape=" + Arrays.toString(shape) + '}';
         }
     }
 }

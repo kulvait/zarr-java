@@ -92,17 +92,18 @@ public abstract class Array extends AbstractNode {
         long[] shape = Utils.toLongArray(array.getShape());
 
         final int[] chunkShape = metadata.chunkShape();
-        Stream<long[]> chunkStream = Arrays.stream(IndexingUtils.computeChunkCoords(metadata.shape, chunkShape, offset, shape));
+        Stream<long[]> chunkStream = Arrays.stream(IndexingUtils.computeChunkCoords(metadata.shape, chunkShape, offset,
+                shape));
         if (parallel) {
             chunkStream = chunkStream.parallel();
         }
         chunkStream.forEach(
                 chunkCoords -> {
                     try {
-                        final IndexingUtils.ChunkProjection chunkProjection =
-                                IndexingUtils.computeProjection(chunkCoords, metadata.shape, chunkShape, offset,
-                                        shape
-                                );
+                        final IndexingUtils.ChunkProjection chunkProjection = IndexingUtils.computeProjection(
+                                chunkCoords, metadata.shape, chunkShape, offset,
+                                shape
+                        );
 
                         ucar.ma2.Array chunkArray;
                         if (IndexingUtils.isFullChunk(chunkProjection.chunkOffset, chunkProjection.shape,
@@ -121,12 +122,12 @@ public abstract class Array extends AbstractNode {
                         writeChunk(chunkCoords, chunkArray);
                     } catch (ZarrException e) {
                         throw new RuntimeException(
-                                "Failed to write chunk at coordinates " + Arrays.toString(chunkCoords) +
-                                ": " + e.getMessage(), e);
+                                "Failed to write chunk at coordinates " + Arrays.toString(
+                                        chunkCoords) + ": " + e.getMessage(), e);
                     } catch (InvalidRangeException e) {
                         throw new RuntimeException(
-                                "Invalid array range when writing chunk at coordinates " + Arrays.toString(chunkCoords) +
-                                ": " + e.getMessage(), e);
+                                "Invalid array range when writing chunk at coordinates " + Arrays.toString(
+                                        chunkCoords) + ": " + e.getMessage(), e);
                     }
                 });
 
@@ -161,7 +162,8 @@ public abstract class Array extends AbstractNode {
      *
      * @param chunkCoords The coordinates of the chunk as computed by the offset of the chunk divided
      *                    by the chunk shape.
-     * @throws ZarrException throws ZarrException if the requested chunk is outside the array's domain or if the read fails
+     * @throws ZarrException throws ZarrException if the requested chunk is outside the array's domain or if the read
+     *                       fails
      */
     @Nonnull
     public ucar.ma2.Array readChunk(long[] chunkCoords) throws ZarrException {
@@ -337,7 +339,8 @@ public abstract class Array extends AbstractNode {
      *
      * @param offset the offset where to start reading
      * @param shape  the shape of the data to read
-     * @throws ZarrException throws ZarrException if the requested data is outside the array's domain or if the read fails
+     * @throws ZarrException throws ZarrException if the requested data is outside the array's domain or if the read
+     *                       fails
      */
     @Nonnull
     public ucar.ma2.Array read(final long[] offset, final long[] shape) throws ZarrException {
@@ -348,7 +351,8 @@ public abstract class Array extends AbstractNode {
      * Reads the entire Zarr array into an ucar.ma2.Array.
      *
      * @param parallel utilizes parallelism if true
-     * @throws ZarrException throws ZarrException if the requested data is outside the array's domain or if the read fails
+     * @throws ZarrException throws ZarrException if the requested data is outside the array's domain or if the read
+     *                       fails
      */
     @Nonnull
     public ucar.ma2.Array read(final boolean parallel) throws ZarrException {
@@ -358,8 +362,7 @@ public abstract class Array extends AbstractNode {
     boolean chunkIsInArray(long[] chunkCoords) {
         final int[] chunkShape = metadata().chunkShape();
         for (int dimIdx = 0; dimIdx < metadata().ndim(); dimIdx++) {
-            if (chunkCoords[dimIdx] < 0
-                    || chunkCoords[dimIdx] * chunkShape[dimIdx] >= metadata().shape[dimIdx]) {
+            if (chunkCoords[dimIdx] < 0 || chunkCoords[dimIdx] * chunkShape[dimIdx] >= metadata().shape[dimIdx]) {
                 return false;
             }
         }
@@ -372,7 +375,8 @@ public abstract class Array extends AbstractNode {
      * @param offset   the offset where to start reading
      * @param shape    the shape of the data to read
      * @param parallel utilizes parallelism if true
-     * @throws ZarrException throws ZarrException if the requested data is outside the array's domain or if the read fails
+     * @throws ZarrException throws ZarrException if the requested data is outside the array's domain or if the read
+     *                       fails
      */
     @Nonnull
     public ucar.ma2.Array read(final long[] offset, final long[] shape, final boolean parallel) throws ZarrException {
@@ -396,17 +400,18 @@ public abstract class Array extends AbstractNode {
 
         final ucar.ma2.Array outputArray = ucar.ma2.Array.factory(metadata.dataType().getMA2DataType(),
                 Utils.toIntArray(shape));
-        Stream<long[]> chunkStream = Arrays.stream(IndexingUtils.computeChunkCoords(metadata.shape, chunkShape, offset, shape));
+        Stream<long[]> chunkStream = Arrays.stream(IndexingUtils.computeChunkCoords(metadata.shape, chunkShape, offset,
+                shape));
         if (parallel) {
             chunkStream = chunkStream.parallel();
         }
         chunkStream.forEach(
                 chunkCoords -> {
                     try {
-                        final IndexingUtils.ChunkProjection chunkProjection =
-                                IndexingUtils.computeProjection(chunkCoords, metadata.shape, chunkShape, offset,
-                                        shape
-                                );
+                        final IndexingUtils.ChunkProjection chunkProjection = IndexingUtils.computeProjection(
+                                chunkCoords, metadata.shape, chunkShape, offset,
+                                shape
+                        );
 
                         if (chunkIsInArray(chunkCoords)) {
                             MultiArrayUtils.copyRegion(metadata.allocateFillValueChunk(),
@@ -427,7 +432,8 @@ public abstract class Array extends AbstractNode {
                         } else {
                             ByteBuffer chunkBytes = chunkHandle.read();
                             if (chunkBytes != null) {
-                                MultiArrayUtils.copyRegion(codecPipeline.decode(chunkBytes), chunkProjection.chunkOffset,
+                                MultiArrayUtils.copyRegion(codecPipeline.decode(chunkBytes),
+                                        chunkProjection.chunkOffset,
                                         outputArray, chunkProjection.outOffset, chunkProjection.shape
                                 );
                             }

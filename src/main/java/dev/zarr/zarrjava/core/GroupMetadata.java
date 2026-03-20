@@ -6,7 +6,6 @@ import javax.annotation.Nonnull;
 
 public abstract class GroupMetadata {
 
-    public @Nonnull
-    abstract Attributes attributes() throws ZarrException;
+    public @Nonnull abstract Attributes attributes() throws ZarrException;
 
 }

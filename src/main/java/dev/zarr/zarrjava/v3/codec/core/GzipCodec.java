@@ -26,14 +26,13 @@ public class GzipCodec extends BytesBytesCodec implements Codec {
 
     @JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
     public GzipCodec(
-            @Nonnull @JsonProperty(value = "configuration", required = true) Configuration configuration) {
+                     @Nonnull @JsonProperty(value = "configuration", required = true) Configuration configuration) {
         this.configuration = configuration;
     }
 
 
     @Override
-    public ByteBuffer decode(ByteBuffer chunkBytes)
-            throws ZarrException {
+    public ByteBuffer decode(ByteBuffer chunkBytes) throws ZarrException {
         try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream(); GZIPInputStream inputStream = new GZIPInputStream(
                 new ByteArrayInputStream(Utils.toArray(chunkBytes)))) {
             Utils.copyStream(inputStream, outputStream);
@@ -45,8 +44,7 @@ public class GzipCodec extends BytesBytesCodec implements Codec {
     }
 
     @Override
-    public ByteBuffer encode(ByteBuffer chunkBytes)
-            throws ZarrException {
+    public ByteBuffer encode(ByteBuffer chunkBytes) throws ZarrException {
         try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream(); GZIPOutputStream gzipStream = new GZIPOutputStream(
                 outputStream)) {
             gzipStream.write(Utils.toArray(chunkBytes));
@@ -58,8 +56,7 @@ public class GzipCodec extends BytesBytesCodec implements Codec {
     }
 
     @Override
-    public long computeEncodedSize(long inputByteLength,
-                                   ArrayMetadata.CoreArrayMetadata arrayMetadata) throws ZarrException {
+    public long computeEncodedSize(long inputByteLength, ArrayMetadata.CoreArrayMetadata arrayMetadata) throws ZarrException {
         throw new ZarrException("Not implemented for Gzip codec.");
     }
 
@@ -68,8 +65,7 @@ public class GzipCodec extends BytesBytesCodec implements Codec {
         public final int level;
 
         @JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
-        public Configuration(@JsonProperty(value = "level", defaultValue = "5") int level)
-                throws ZarrException {
+        public Configuration(@JsonProperty(value = "level", defaultValue = "5") int level) throws ZarrException {
             if (level < 0 || level > 9) {
                 throw new ZarrException("'level' needs to be between 0 and 9.");
             }
@@ -77,5 +73,4 @@ public class GzipCodec extends BytesBytesCodec implements Codec {
         }
     }
 }
-
 
