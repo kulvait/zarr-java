@@ -25,7 +25,10 @@ public class CodecRegistry {
     }
 
     public static NamedType[] getNamedTypes() {
-        return map.entrySet().stream().map(entry -> new NamedType(entry.getValue(), entry.getKey())).toArray(
-                NamedType[]::new);
+        return map.entrySet()
+                .stream()
+                .map(entry -> new NamedType(entry.getValue(), entry.getKey()))
+                .toArray(
+                        NamedType[]::new);
     }
 }

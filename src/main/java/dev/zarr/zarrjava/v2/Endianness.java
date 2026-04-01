@@ -4,7 +4,9 @@ import com.fasterxml.jackson.annotation.JsonValue;
 import dev.zarr.zarrjava.v2.codec.core.BytesCodec;
 
 public enum Endianness {
-    LITTLE("<"), BIG(">"), UNSPECIFIED("|");
+    LITTLE("<"),
+    BIG(">"),
+    UNSPECIFIED("|");
 
     private final String value;
 

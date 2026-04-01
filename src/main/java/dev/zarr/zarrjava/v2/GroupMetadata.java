@@ -21,7 +21,8 @@ public final class GroupMetadata extends dev.zarr.zarrjava.core.GroupMetadata {
 
     @JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
     public GroupMetadata(
-                         @JsonProperty(value = "zarr_format", required = true) int zarrFormat, @JsonProperty(value = "attributes", required = false) @Nullable Attributes attributes
+            @JsonProperty(value = "zarr_format", required = true) int zarrFormat,
+            @JsonProperty(value = "attributes", required = false) @Nullable Attributes attributes
     ) throws ZarrException {
         if (zarrFormat != this.zarrFormat) {
             throw new ZarrException(

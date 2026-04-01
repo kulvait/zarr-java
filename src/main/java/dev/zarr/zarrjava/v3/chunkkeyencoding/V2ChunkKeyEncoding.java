@@ -19,7 +19,7 @@ public class V2ChunkKeyEncoding extends ChunkKeyEncoding {
 
     @JsonCreator
     public V2ChunkKeyEncoding(
-                              @JsonProperty(value = "configuration") Configuration configuration
+            @JsonProperty(value = "configuration") Configuration configuration
     ) {
         if (configuration == null) {
             this.configuration = new Configuration(Separator.DOT);
@@ -30,7 +30,8 @@ public class V2ChunkKeyEncoding extends ChunkKeyEncoding {
 
     @Override
     public String[] encodeChunkKey(long[] chunkCoords) {
-        Stream<String> keys = Arrays.stream(chunkCoords).mapToObj(Long::toString);
+        Stream<String> keys = Arrays.stream(chunkCoords)
+                .mapToObj(Long::toString);
         if (configuration.separator == Separator.SLASH) {
             return keys.toArray(String[]::new);
         }
@@ -43,7 +44,7 @@ public class V2ChunkKeyEncoding extends ChunkKeyEncoding {
 
         @JsonCreator
         public Configuration(
-                             @Nonnull @JsonProperty(value = "separator", defaultValue = ".") Separator separator) {
+                @Nonnull @JsonProperty(value = "separator", defaultValue = ".") Separator separator) {
             this.separator = separator;
         }
     }

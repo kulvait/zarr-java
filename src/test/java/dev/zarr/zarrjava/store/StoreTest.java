@@ -30,8 +30,7 @@ public abstract class StoreTest extends ZarrTest {
     abstract StoreHandle storeHandleWithoutData();
 
     /**
-     * Returns a Store with some test arrays written to it used to test list() and exist() (can be written by the same
-     * Store implementation).
+     * Returns a Store with some test arrays written to it used to test list() and exist() (can be written by the same Store implementation).
      */
     abstract Store storeWithArrays() throws ZarrException, IOException;
 
@@ -129,13 +128,17 @@ public abstract class StoreTest extends ZarrTest {
     Group writeTestGroupV3(StoreHandle storeHandle, boolean useParallel) throws ZarrException, IOException {
 
         dev.zarr.zarrjava.v3.Group group = dev.zarr.zarrjava.v3.Group.create(storeHandle);
-        dev.zarr.zarrjava.v3.Array array = group.createArray("array", b -> b.withShape(1024, 1024).withDataType(
-                dev.zarr.zarrjava.v3.DataType.UINT8).withChunkShape(512, 512)
+        dev.zarr.zarrjava.v3.Array array = group.createArray("array", b -> b
+                .withShape(1024, 1024)
+                .withDataType(dev.zarr.zarrjava.v3.DataType.UINT8)
+                .withChunkShape(512, 512)
         );
         array.write(ucar.ma2.Array.factory(DataType.BYTE, new int[]{1024, 1024}, testData()), useParallel);
         dev.zarr.zarrjava.v3.Group subgroup = group.createGroup("subgroup");
-        dev.zarr.zarrjava.v3.Array subgrouparray = subgroup.createArray("array", b -> b.withShape(1024,
-                1024).withDataType(dev.zarr.zarrjava.v3.DataType.UINT8).withChunkShape(512, 512)
+        dev.zarr.zarrjava.v3.Array subgrouparray = subgroup.createArray("array", b -> b
+                .withShape(1024, 1024)
+                .withDataType(dev.zarr.zarrjava.v3.DataType.UINT8)
+                .withChunkShape(512, 512)
         );
         subgrouparray.write(ucar.ma2.Array.factory(DataType.BYTE, new int[]{1024, 1024}, testData()), useParallel);
 
@@ -163,8 +166,10 @@ public abstract class StoreTest extends ZarrTest {
 
     dev.zarr.zarrjava.v2.Group writeTestGroupV2(StoreHandle storeHandle, boolean useParallel) throws ZarrException, IOException {
         dev.zarr.zarrjava.v2.Group group = dev.zarr.zarrjava.v2.Group.create(storeHandle);
-        dev.zarr.zarrjava.v2.Array array = group.createArray("array", b -> b.withShape(1024, 1024).withDataType(
-                dev.zarr.zarrjava.v2.DataType.UINT8).withChunks(512, 512)
+        dev.zarr.zarrjava.v2.Array array = group.createArray("array", b -> b
+                .withShape(1024, 1024)
+                .withDataType(dev.zarr.zarrjava.v2.DataType.UINT8)
+                .withChunks(512, 512)
         );
         array.write(ucar.ma2.Array.factory(DataType.BYTE, new int[]{1024, 1024}, testData()), useParallel);
         group.createGroup("subgroup");

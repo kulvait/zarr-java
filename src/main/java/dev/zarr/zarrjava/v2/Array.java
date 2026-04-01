@@ -61,7 +61,8 @@ public class Array extends dev.zarr.zarrjava.core.Array implements Node {
                     Attributes.class
             );
         return new Array(
-                storeHandle, metadata
+                storeHandle,
+                metadata
         );
     }
 
@@ -108,7 +109,8 @@ public class Array extends dev.zarr.zarrjava.core.Array implements Node {
      * @throws IOException   if the metadata cannot be serialized
      * @throws ZarrException if the Zarr array cannot be created
      */
-    public static Array create(Path path, ArrayMetadata arrayMetadata) throws IOException, ZarrException {
+    public static Array create(Path path, ArrayMetadata arrayMetadata)
+            throws IOException, ZarrException {
         return create(new StoreHandle(new FilesystemStore(path)), arrayMetadata);
     }
 
@@ -122,7 +124,8 @@ public class Array extends dev.zarr.zarrjava.core.Array implements Node {
      * @throws IOException   if the metadata cannot be serialized
      * @throws ZarrException if the Zarr array cannot be created
      */
-    public static Array create(String path, ArrayMetadata arrayMetadata) throws IOException, ZarrException {
+    public static Array create(String path, ArrayMetadata arrayMetadata)
+            throws IOException, ZarrException {
         return create(Paths.get(path), arrayMetadata);
     }
 
@@ -136,7 +139,8 @@ public class Array extends dev.zarr.zarrjava.core.Array implements Node {
      * @throws IOException   if the metadata cannot be serialized
      * @throws ZarrException if the Zarr array cannot be created
      */
-    public static Array create(StoreHandle storeHandle, ArrayMetadata arrayMetadata) throws IOException, ZarrException {
+    public static Array create(StoreHandle storeHandle, ArrayMetadata arrayMetadata)
+            throws IOException, ZarrException {
         return Array.create(storeHandle, arrayMetadata, false);
     }
 
@@ -151,11 +155,13 @@ public class Array extends dev.zarr.zarrjava.core.Array implements Node {
      * @throws IOException   throws IOException if the metadata cannot be serialized
      * @throws ZarrException throws ZarrException if the Zarr array cannot be created
      */
-    public static Array create(StoreHandle storeHandle, ArrayMetadata arrayMetadata, boolean existsOk) throws IOException, ZarrException {
+    public static Array create(StoreHandle storeHandle, ArrayMetadata arrayMetadata, boolean existsOk)
+            throws IOException, ZarrException {
         StoreHandle metadataHandle = storeHandle.resolve(ZARRAY);
         if (!existsOk && metadataHandle.exists()) {
             throw new RuntimeException(
-                    "Trying to create a new array in " + storeHandle + ". But " + metadataHandle + " already exists.");
+                    "Trying to create a new array in " + storeHandle + ". But " + metadataHandle
+                            + " already exists.");
         }
         ObjectWriter objectWriter = makeObjectWriter();
         ByteBuffer metadataBytes = ByteBuffer.wrap(objectWriter.writeValueAsBytes(arrayMetadata));
@@ -169,7 +175,9 @@ public class Array extends dev.zarr.zarrjava.core.Array implements Node {
         return new Array(storeHandle, arrayMetadata);
     }
 
-    public static Array create(StoreHandle storeHandle, Function<ArrayMetadataBuilder, ArrayMetadataBuilder> arrayMetadataBuilderMapper, boolean existsOk) throws IOException, ZarrException {
+    public static Array create(StoreHandle storeHandle,
+                               Function<ArrayMetadataBuilder, ArrayMetadataBuilder> arrayMetadataBuilderMapper,
+                               boolean existsOk) throws IOException, ZarrException {
         return create(storeHandle,
                 arrayMetadataBuilderMapper.apply(new ArrayMetadataBuilder()).build(), existsOk);
     }
@@ -243,7 +251,9 @@ public class Array extends dev.zarr.zarrjava.core.Array implements Node {
             cleanupChunksForResize(newShape, parallel);
         }
 
-        ArrayMetadata newArrayMetadata = ArrayMetadataBuilder.fromArrayMetadata(metadata).withShape(newShape).build();
+        ArrayMetadata newArrayMetadata = ArrayMetadataBuilder.fromArrayMetadata(metadata)
+                .withShape(newShape)
+                .build();
         return writeMetadata(newArrayMetadata);
     }
 
@@ -257,8 +267,10 @@ public class Array extends dev.zarr.zarrjava.core.Array implements Node {
      * @throws IOException   throws IOException if the new metadata cannot be serialized
      */
     public Array setAttributes(Attributes newAttributes) throws ZarrException, IOException {
-        ArrayMetadata newArrayMetadata = ArrayMetadataBuilder.fromArrayMetadata(metadata, false).withAttributes(
-                newAttributes).build();
+        ArrayMetadata newArrayMetadata =
+                ArrayMetadataBuilder.fromArrayMetadata(metadata, false)
+                        .withAttributes(newAttributes)
+                        .build();
         return writeMetadata(newArrayMetadata);
     }
 
@@ -280,7 +292,9 @@ public class Array extends dev.zarr.zarrjava.core.Array implements Node {
     @Override
     public String toString() {
         return String.format("<v2.Array {%s} (%s) %s>", storeHandle,
-                Arrays.stream(metadata.shape).mapToObj(Long::toString).collect(Collectors.joining(", ")),
+                Arrays.stream(metadata.shape)
+                        .mapToObj(Long::toString)
+                        .collect(Collectors.joining(", ")),
                 metadata.dataType
         );
     }

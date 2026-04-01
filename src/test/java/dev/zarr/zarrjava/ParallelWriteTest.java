@@ -24,8 +24,12 @@ public class ParallelWriteTest extends ZarrTest {
         int shape = 1000;
         int chunk = 100;
 
-        Array array = Array.create(storeHandle, Array.metadataBuilder().withShape(shape, shape).withDataType(
-                DataType.INT32).withChunkShape(chunk, chunk).withFillValue(0).build());
+        Array array = Array.create(storeHandle, Array.metadataBuilder()
+                .withShape(shape, shape)
+                .withDataType(DataType.INT32)
+                .withChunkShape(chunk, chunk)
+                .withFillValue(0)
+                .build());
 
         int[] data = new int[shape * shape];
         // Fill with some deterministic pattern
@@ -58,12 +62,13 @@ public class ParallelWriteTest extends ZarrTest {
         // Metadata with sharding
         // With shape 128 and shardSize 64, we have 2x2 = 4 shards.
         // Array.write(parallel=true) will likely process these shards concurrently.
-        dev.zarr.zarrjava.v3.ArrayMetadata metadata = Array.metadataBuilder().withShape(shape, shape).withDataType(
-                DataType.INT32).withChunkShape(shardSize, shardSize) // This sets the shard shape (outer chunks)
-                                                           .withCodecs(c -> c.withSharding(
-                                                                   new int[]{innerChunk, innerChunk},
-                                                                   c2 -> c2.withBytes("LITTLE"))).withFillValue(
-                                                                           0).build();
+        dev.zarr.zarrjava.v3.ArrayMetadata metadata = Array.metadataBuilder()
+                .withShape(shape, shape)
+                .withDataType(DataType.INT32)
+                .withChunkShape(shardSize, shardSize) // This sets the shard shape (outer chunks)
+                .withCodecs(c -> c.withSharding(new int[]{innerChunk, innerChunk}, c2 -> c2.withBytes("LITTLE")))
+                .withFillValue(0)
+                .build();
 
         Array array = Array.create(storeHandle, metadata);
 
@@ -95,8 +100,12 @@ public class ParallelWriteTest extends ZarrTest {
         int shapeX = chunksX * chunkSize;
         int shapeY = chunksY * chunkSize;
 
-        Array array = Array.create(storeHandle, Array.metadataBuilder().withShape(shapeX, shapeY).withDataType(
-                DataType.INT32).withChunkShape(chunkSize, chunkSize).withFillValue(-1).build());
+        Array array = Array.create(storeHandle, Array.metadataBuilder()
+                .withShape(shapeX, shapeY)
+                .withDataType(DataType.INT32)
+                .withChunkShape(chunkSize, chunkSize)
+                .withFillValue(-1)
+                .build());
 
         ExecutorService executor = Executors.newFixedThreadPool(8);
         List<Callable<Void>> tasks = new ArrayList<>();
@@ -110,8 +119,7 @@ public class ParallelWriteTest extends ZarrTest {
                     int val = cx * chunksY + cy; // Unique value per chunk
                     java.util.Arrays.fill(chunkData, val);
 
-                    ucar.ma2.Array ucarArray = ucar.ma2.Array.factory(ucar.ma2.DataType.INT,
-                            new int[]{chunkSize, chunkSize}, chunkData);
+                    ucar.ma2.Array ucarArray = ucar.ma2.Array.factory(ucar.ma2.DataType.INT, new int[]{chunkSize, chunkSize}, chunkData);
 
                     // Write to specific chunk offset
                     long[] offset = new long[]{cx * chunkSize, cy * chunkSize};

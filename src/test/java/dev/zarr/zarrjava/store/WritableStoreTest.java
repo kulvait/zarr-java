@@ -38,12 +38,14 @@ public abstract class WritableStoreTest extends StoreTest {
                 "array/zarr.json"
         ));
 
-        Set<String> actualKeys = storeHandle.resolve("subgroup").list().map(node -> String.join("/", node)).collect(
-                Collectors.toSet());
+        Set<String> actualKeys = storeHandle.resolve("subgroup").list()
+                .map(node -> String.join("/", node))
+                .collect(Collectors.toSet());
         Assertions.assertEquals(expectedSubgroupKeys, actualKeys);
 
-        List<String> allKeys = ((Store.ListableStore) storeHandle.store).list().map(node -> String.join("/",
-                node)).collect(Collectors.toList());
+        List<String> allKeys = ((Store.ListableStore) storeHandle.store).list()
+                .map(node -> String.join("/", node))
+                .collect(Collectors.toList());
         Assertions.assertEquals(12, allKeys.size(), "Total number of keys in store should be 12 but was: " + allKeys);
     }
 
@@ -60,14 +62,16 @@ public abstract class WritableStoreTest extends StoreTest {
                 "subgroup"
         ));
 
-        Set<String> actualChildren = storeHandle.resolve().listChildren().collect(Collectors.toSet());
+        Set<String> actualChildren = storeHandle.resolve().listChildren()
+                .collect(Collectors.toSet());
         Assertions.assertEquals(expectedChildren, actualChildren);
 
         Set<String> expectedSubgroupKeys = new HashSet<>(Arrays.asList(
                 "array",
                 "zarr.json"
         ));
-        Set<String> subgroupChildren = storeHandle.resolve("subgroup").listChildren().collect(Collectors.toSet());
+        Set<String> subgroupChildren = storeHandle.resolve("subgroup").listChildren()
+                .collect(Collectors.toSet());
 
         Assertions.assertEquals(expectedSubgroupKeys, subgroupChildren);
     }
@@ -86,11 +90,9 @@ public abstract class WritableStoreTest extends StoreTest {
         StoreHandle storeHandle = store.resolve("testDelete");
 
         storeHandle.resolve("toBeDeleted").set(ByteBuffer.allocate(0));
-        Assertions.assertTrue(storeHandle.resolve("toBeDeleted").exists(),
-                "Key toBeDeleted should exist before deletion.");
+        Assertions.assertTrue(storeHandle.resolve("toBeDeleted").exists(), "Key toBeDeleted should exist before deletion.");
         storeHandle.resolve("toBeDeleted").delete();
-        Assertions.assertFalse(storeHandle.resolve("toBeDeleted").exists(),
-                "Key toBeDeleted should not exist after deletion.");
+        Assertions.assertFalse(storeHandle.resolve("toBeDeleted").exists(), "Key toBeDeleted should not exist after deletion.");
 
     }
 
@@ -99,12 +101,13 @@ public abstract class WritableStoreTest extends StoreTest {
     public void testWriteReadV3(boolean useParallel) throws ZarrException, IOException {
         int[] testData = testDataInt();
         Store store = writableStore();
-        StoreHandle storeHandle = store.resolve("testWriteReadV3").resolve(store.getClass().getSimpleName()).resolve(
-                "" + useParallel);
+        StoreHandle storeHandle = store.resolve("testWriteReadV3").resolve(store.getClass().getSimpleName()).resolve("" + useParallel);
 
         dev.zarr.zarrjava.v3.Group group = dev.zarr.zarrjava.v3.Group.create(storeHandle);
-        Array array = group.createArray("array", b -> b.withShape(1024, 1024).withDataType(
-                dev.zarr.zarrjava.v3.DataType.UINT32).withChunkShape(64, 64)
+        Array array = group.createArray("array", b -> b
+                .withShape(1024, 1024)
+                .withDataType(dev.zarr.zarrjava.v3.DataType.UINT32)
+                .withChunkShape(64, 64)
         );
         array.write(ucar.ma2.Array.factory(ucar.ma2.DataType.UINT, new int[]{1024, 1024}, testData), useParallel);
         group.createGroup("subgroup");
@@ -124,11 +127,12 @@ public abstract class WritableStoreTest extends StoreTest {
     public void testWriteReadV2(boolean useParallel) throws ZarrException, IOException {
         int[] testData = testDataInt();
         Store store = writableStore();
-        StoreHandle storeHandle = store.resolve("testMemoryStoreV2").resolve(store.getClass().getSimpleName()).resolve(
-                "" + useParallel);
+        StoreHandle storeHandle = store.resolve("testMemoryStoreV2").resolve(store.getClass().getSimpleName()).resolve("" + useParallel);
         dev.zarr.zarrjava.v2.Group group = dev.zarr.zarrjava.v2.Group.create(storeHandle);
-        dev.zarr.zarrjava.v2.Array array = group.createArray("array", b -> b.withShape(1024, 1024).withDataType(
-                dev.zarr.zarrjava.v2.DataType.UINT32).withChunks(512, 512)
+        dev.zarr.zarrjava.v2.Array array = group.createArray("array", b -> b
+                .withShape(1024, 1024)
+                .withDataType(dev.zarr.zarrjava.v2.DataType.UINT32)
+                .withChunks(512, 512)
         );
         array.write(ucar.ma2.Array.factory(ucar.ma2.DataType.UINT, new int[]{1024, 1024}, testData), useParallel);
         group.createGroup("subgroup");

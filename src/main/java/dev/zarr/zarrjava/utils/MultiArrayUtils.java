@@ -11,7 +11,8 @@ import java.util.Arrays;
 
 public class MultiArrayUtils {
 
-    public static void copyRegion(Array source, int[] sourceOffset, Array target, int[] targetOffset, int[] shape) {
+    public static void copyRegion(Array source, int[] sourceOffset, Array target, int[] targetOffset,
+                                  int[] shape) {
         if (sourceOffset.length != targetOffset.length) {
             throw new IllegalArgumentException(
                     "'sourceOffset' and 'targetOffset' do not have the same rank.");
@@ -82,7 +83,8 @@ public class MultiArrayUtils {
         if (!Arrays.equals(source.getShape(), target.getShape())) {
             return false;
         }
-        if (!source.getElementType().equals(target.getElementType())) {
+        if (!source.getElementType()
+                .equals(target.getElementType())) {
             return false;
         }
 
@@ -268,12 +270,14 @@ public class MultiArrayUtils {
 
             @Override
             public boolean isEqual(IndexIterator iterator, Object value) {
-                return iterator.getObjectNext().equals(value);
+                return iterator.getObjectNext()
+                        .equals(value);
             }
 
             @Override
             public boolean isEqual(IndexIterator sourceIterator, IndexIterator targetIterator) {
-                return targetIterator.getObjectNext().equals(sourceIterator.getObjectNext());
+                return targetIterator.getObjectNext()
+                        .equals(sourceIterator.getObjectNext());
             }
         };
     }

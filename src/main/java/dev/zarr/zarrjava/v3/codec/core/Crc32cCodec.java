@@ -22,7 +22,8 @@ public class Crc32cCodec extends BytesBytesCodec implements Codec {
     }
 
     @Override
-    public ByteBuffer decode(ByteBuffer chunkBytes) throws ZarrException {
+    public ByteBuffer decode(ByteBuffer chunkBytes)
+            throws ZarrException {
         ByteBuffer buffer = chunkBytes.slice();
         buffer.order(ByteOrder.LITTLE_ENDIAN);
 
@@ -37,7 +38,9 @@ public class Crc32cCodec extends BytesBytesCodec implements Codec {
 
         if (computedCrc32c != storedCrc32c) {
             throw new ZarrException(
-                    "The checksum of the sharding index is invalid. Stored: " + storedCrc32c + " " + "Computed: " + computedCrc32c);
+                    "The checksum of the sharding index is invalid. Stored: " + storedCrc32c + " "
+                            + "Computed: " +
+                            computedCrc32c);
         }
         buffer.rewind();
         buffer.limit(buffer.capacity() - 4);
@@ -58,7 +61,8 @@ public class Crc32cCodec extends BytesBytesCodec implements Codec {
     }
 
     @Override
-    public long computeEncodedSize(long inputByteLength, CoreArrayMetadata arrayMetadata) throws ZarrException {
+    public long computeEncodedSize(long inputByteLength,
+                                   CoreArrayMetadata arrayMetadata) throws ZarrException {
         return inputByteLength + 4;
     }
 }

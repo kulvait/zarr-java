@@ -113,18 +113,16 @@ public class ZarrPythonTests extends ZarrTest {
     }
 
     public void run_python_script(String scriptName, String... args) throws IOException, InterruptedException {
-        int exitCode = runCommand(Stream.concat(Stream.of("uv", "run", PYTHON_TEST_PATH.resolve(scriptName).toString()),
-                Arrays.stream(args)).toArray(String[]::new));
+        int exitCode = runCommand(Stream.concat(Stream.of("uv", "run", PYTHON_TEST_PATH.resolve(scriptName)
+                .toString()), Arrays.stream(args)).toArray(String[]::new));
         assert exitCode == 0;
     }
 
     @ParameterizedTest
     @MethodSource("compressorAndDataTypeProviderV3")
     public void testReadV3(String codec, String codecParam, DataType dataType) throws IOException, ZarrException, InterruptedException {
-        StoreHandle storeHandle = new FilesystemStore(TESTOUTPUT).resolve("testReadV3", codec, codecParam,
-                dataType.name());
-        run_python_script("zarr_python_write.py", codec, codecParam, dataType.name().toLowerCase(),
-                storeHandle.toPath().toString());
+        StoreHandle storeHandle = new FilesystemStore(TESTOUTPUT).resolve("testReadV3", codec, codecParam, dataType.name());
+        run_python_script("zarr_python_write.py", codec, codecParam, dataType.name().toLowerCase(), storeHandle.toPath().toString());
         Array array = Array.open(storeHandle);
         ucar.ma2.Array result = array.read();
 
@@ -141,11 +139,14 @@ public class ZarrPythonTests extends ZarrTest {
     public void testWriteV3(String codec, String codecParam, DataType dataType) throws Exception {
         Attributes attributes = new Attributes();
         attributes.put("test_key", "test_value");
-        StoreHandle storeHandle = new FilesystemStore(TESTOUTPUT).resolve("testWriteV3", codec, codecParam,
-                dataType.name());
+        StoreHandle storeHandle = new FilesystemStore(TESTOUTPUT).resolve("testWriteV3", codec, codecParam, dataType.name());
 
-        ArrayMetadataBuilder builder = Array.metadataBuilder().withShape(16, 16, 16).withDataType(
-                dataType).withChunkShape(2, 4, 8).withFillValue(0).withAttributes(attributes);
+        ArrayMetadataBuilder builder = Array.metadataBuilder()
+                .withShape(16, 16, 16)
+                .withDataType(dataType)
+                .withChunkShape(2, 4, 8)
+                .withFillValue(0)
+                .withAttributes(attributes);
 
         switch (codec) {
             case "blosc":
@@ -169,12 +170,10 @@ public class ZarrPythonTests extends ZarrTest {
                 builder = builder.withCodecs(c -> c.withTranspose(new int[]{1, 0, 2}));
                 break;
             case "sharding":
-                builder = builder.withCodecs(c -> c.withSharding(new int[]{2, 2, 4}, c1 -> c1.withBytes("LITTLE"),
-                        codecParam));
+                builder = builder.withCodecs(c -> c.withSharding(new int[]{2, 2, 4}, c1 -> c1.withBytes("LITTLE"), codecParam));
                 break;
             case "sharding_nested":
-                builder = builder.withCodecs(c -> c.withSharding(new int[]{2, 2, 4}, c1 -> c1.withSharding(
-                        new int[]{2, 1, 2}, c2 -> c2.withBytes("LITTLE"))));
+                builder = builder.withCodecs(c -> c.withSharding(new int[]{2, 2, 4}, c1 -> c1.withSharding(new int[]{2, 1, 2}, c2 -> c2.withBytes("LITTLE"))));
                 break;
             case "crc32c":
                 builder = builder.withCodecs(CodecBuilder::withCrc32c);
@@ -198,17 +197,14 @@ public class ZarrPythonTests extends ZarrTest {
         assertIsTestdata(result, dataType);
 
         //read in zarr_python
-        run_python_script("zarr_python_read.py", codec, codecParam, dataType.name().toLowerCase(),
-                storeHandle.toPath().toString());
+        run_python_script("zarr_python_read.py", codec, codecParam, dataType.name().toLowerCase(), storeHandle.toPath().toString());
     }
 
     @ParameterizedTest
     @MethodSource("compressorAndDataTypeProviderV2")
     public void testReadV2(String compressor, String compressorParam, dev.zarr.zarrjava.v2.DataType dt) throws IOException, ZarrException, InterruptedException {
-        StoreHandle storeHandle = new FilesystemStore(TESTOUTPUT).resolve("testReadV2", compressor, compressorParam,
-                dt.name());
-        run_python_script("zarr_python_write_v2.py", compressor, compressorParam, dt.getValue(),
-                storeHandle.toPath().toString());
+        StoreHandle storeHandle = new FilesystemStore(TESTOUTPUT).resolve("testReadV2", compressor, compressorParam, dt.name());
+        run_python_script("zarr_python_write_v2.py", compressor, compressorParam, dt.getValue(), storeHandle.toPath().toString());
 
         dev.zarr.zarrjava.v2.Array array = dev.zarr.zarrjava.v2.Array.open(storeHandle);
         ucar.ma2.Array result = array.read();
@@ -227,11 +223,14 @@ public class ZarrPythonTests extends ZarrTest {
     public void testWriteV2(String compressor, String compressorParam, dev.zarr.zarrjava.v2.DataType dt) throws Exception {
         Attributes attributes = new Attributes();
         attributes.put("test_key", "test_value");
-        StoreHandle storeHandle = new FilesystemStore(TESTOUTPUT).resolve("testCodecsWriteV2", compressor,
-                compressorParam, dt.name());
+        StoreHandle storeHandle = new FilesystemStore(TESTOUTPUT).resolve("testCodecsWriteV2", compressor, compressorParam, dt.name());
 
-        dev.zarr.zarrjava.v2.ArrayMetadataBuilder builder = dev.zarr.zarrjava.v2.Array.metadataBuilder().withShape(16,
-                16, 16).withDataType(dt).withChunks(2, 4, 8).withAttributes(attributes).withFillValue(0);
+        dev.zarr.zarrjava.v2.ArrayMetadataBuilder builder = dev.zarr.zarrjava.v2.Array.metadataBuilder()
+                .withShape(16, 16, 16)
+                .withDataType(dt)
+                .withChunks(2, 4, 8)
+                .withAttributes(attributes)
+                .withFillValue(0);
 
         switch (compressor) {
             case "blosc":
@@ -261,8 +260,7 @@ public class ZarrPythonTests extends ZarrTest {
         assertIsTestdata(result, dt);
 
         //read in zarr_python
-        run_python_script("zarr_python_read_v2.py", compressor, compressorParam, dt.getValue(),
-                storeHandle.toPath().toString());
+        run_python_script("zarr_python_read_v2.py", compressor, compressorParam, dt.getValue(), storeHandle.toPath().toString());
     }
 
     @CsvSource({"0,true", "0,false", "5, true", "10, false"})
@@ -305,15 +303,15 @@ public class ZarrPythonTests extends ZarrTest {
         StoreHandle storeHandle2 = new FilesystemStore(TESTOUTPUT).resolve("testGroupReadWriteV2", "read");
         Group group = Group.create(storeHandle, new Attributes(b -> b.set("attr", "value")));
         dev.zarr.zarrjava.v2.DataType dataType = dev.zarr.zarrjava.v2.DataType.INT32;
-        dev.zarr.zarrjava.v2.Array array = group.createGroup("group").createArray("array",
-                arrayMetadataBuilder -> arrayMetadataBuilder.withShape(16, 16, 16).withDataType(dataType).withChunks(2,
-                        4, 8)
+        dev.zarr.zarrjava.v2.Array array = group.createGroup("group").createArray("array", arrayMetadataBuilder -> arrayMetadataBuilder
+                .withShape(16, 16, 16)
+                .withDataType(dataType)
+                .withChunks(2, 4, 8)
         );
 
         array.write(testdata(dataType));
 
-        run_python_script("zarr_python_group.py", storeHandle.toPath().toString(), storeHandle2.toPath().toString(),
-                "" + 2);
+        run_python_script("zarr_python_group.py", storeHandle.toPath().toString(), storeHandle2.toPath().toString(), "" + 2);
 
         Group group2 = Group.open(storeHandle2);
         Assertions.assertEquals("value", group2.metadata().attributes().get("attr"));
@@ -330,18 +328,17 @@ public class ZarrPythonTests extends ZarrTest {
     public void testGroupReadWriteV3() throws Exception {
         StoreHandle storeHandle = new FilesystemStore(TESTOUTPUT).resolve("testGroupReadWriteV3", "write");
         StoreHandle storeHandle2 = new FilesystemStore(TESTOUTPUT).resolve("testGroupReadWriteV3", "read");
-        dev.zarr.zarrjava.v3.Group group = dev.zarr.zarrjava.v3.Group.create(storeHandle, new Attributes(b -> b.set(
-                "attr", "value")));
+        dev.zarr.zarrjava.v3.Group group = dev.zarr.zarrjava.v3.Group.create(storeHandle, new Attributes(b -> b.set("attr", "value")));
         dev.zarr.zarrjava.v3.DataType dataType = DataType.INT32;
-        dev.zarr.zarrjava.v3.Array array = group.createGroup("group").createArray("array",
-                arrayMetadataBuilder -> arrayMetadataBuilder.withShape(16, 16, 16).withDataType(
-                        dataType).withChunkShape(2, 4, 8)
+        dev.zarr.zarrjava.v3.Array array = group.createGroup("group").createArray("array", arrayMetadataBuilder -> arrayMetadataBuilder
+                .withShape(16, 16, 16)
+                .withDataType(dataType)
+                .withChunkShape(2, 4, 8)
         );
 
         array.write(testdata(dataType));
 
-        run_python_script("zarr_python_group.py", storeHandle.toPath().toString(), storeHandle2.toPath().toString(),
-                "" + 3);
+        run_python_script("zarr_python_group.py", storeHandle.toPath().toString(), storeHandle2.toPath().toString(), "" + 3);
 
         dev.zarr.zarrjava.v3.Group group2 = dev.zarr.zarrjava.v3.Group.open(storeHandle2);
         Assertions.assertEquals("value", group2.metadata().attributes().get("attr"));

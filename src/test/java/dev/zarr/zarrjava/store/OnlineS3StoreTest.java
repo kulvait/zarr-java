@@ -23,13 +23,16 @@ public class OnlineS3StoreTest extends StoreTest {
 
     @BeforeAll
     void createStore() {
-        S3Store s3Store = new S3Store(S3Client.builder().endpointOverride(URI.create(
-                "https://uk1s3.embassy.ebi.ac.uk")).region(Region.US_EAST_1) // required, but ignored
-                                              .serviceConfiguration(
-                                                      S3Configuration.builder().pathStyleAccessEnabled(true) // required
-                                                                     .build()
-                                              ).credentialsProvider(
-                                                      AnonymousCredentialsProvider.create()).build(), "idr", "zarr/v0.5/idr0033A");
+        S3Store s3Store = new S3Store(S3Client.builder()
+                .endpointOverride(URI.create("https://uk1s3.embassy.ebi.ac.uk"))
+                .region(Region.US_EAST_1) // required, but ignored
+                .serviceConfiguration(
+                        S3Configuration.builder()
+                                .pathStyleAccessEnabled(true) // required
+                                .build()
+                )
+                .credentialsProvider(AnonymousCredentialsProvider.create())
+                .build(), "idr", "zarr/v0.5/idr0033A");
         storeHandle = s3Store.resolve("BR00109990_C2.zarr", "0", "0");
     }
 
@@ -90,4 +93,5 @@ public class OnlineS3StoreTest extends StoreTest {
         Assertions.assertTrue(storeHandle.list().count() > 1);
     }
 }
+
 

@@ -90,7 +90,7 @@ public class Group extends dev.zarr.zarrjava.core.Group implements Node {
      * @throws IOException if the metadata cannot be serialized
      */
     public static Group create(
-                               @Nonnull StoreHandle storeHandle, @Nonnull GroupMetadata groupMetadata
+            @Nonnull StoreHandle storeHandle, @Nonnull GroupMetadata groupMetadata
     ) throws IOException {
         return new Group(storeHandle, groupMetadata).writeMetadata();
     }
@@ -223,7 +223,8 @@ public class Group extends dev.zarr.zarrjava.core.Group implements Node {
      * @throws IOException   if the metadata cannot be serialized
      * @throws ZarrException if the array cannot be created
      */
-    public Array createArray(String key, ArrayMetadata arrayMetadata) throws IOException, ZarrException {
+    public Array createArray(String key, ArrayMetadata arrayMetadata)
+            throws IOException, ZarrException {
         return Array.create(storeHandle.resolve(key), arrayMetadata);
     }
 
@@ -236,7 +237,8 @@ public class Group extends dev.zarr.zarrjava.core.Group implements Node {
      * @throws IOException   if the metadata cannot be serialized
      * @throws ZarrException if the array cannot be created
      */
-    public Array createArray(String key, Function<ArrayMetadataBuilder, ArrayMetadataBuilder> arrayMetadataBuilderMapper) throws IOException, ZarrException {
+    public Array createArray(String key, Function<ArrayMetadataBuilder, ArrayMetadataBuilder> arrayMetadataBuilderMapper)
+            throws IOException, ZarrException {
         return Array.create(storeHandle.resolve(key), arrayMetadataBuilderMapper, false);
     }
 
@@ -279,7 +281,8 @@ public class Group extends dev.zarr.zarrjava.core.Group implements Node {
      * @throws ZarrException if the new attributes are invalid
      * @throws IOException   if the metadata cannot be serialized
      */
-    public Group updateAttributes(Function<Attributes, Attributes> attributeMapper) throws ZarrException, IOException {
+    public Group updateAttributes(Function<Attributes, Attributes> attributeMapper)
+            throws ZarrException, IOException {
         Attributes currentAttributes = metadata.attributes != null ? new Attributes(metadata.attributes) : new Attributes();
         return setAttributes(attributeMapper.apply(currentAttributes));
     }

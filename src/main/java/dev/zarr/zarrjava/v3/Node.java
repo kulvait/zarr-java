@@ -41,12 +41,16 @@ public interface Node extends dev.zarr.zarrjava.core.Node {
         ObjectMapper objectMapper = makeObjectMapper();
         ByteBuffer metadataBytes = storeHandle.resolve(ZARR_JSON).readNonNull();
         byte[] metadataBytearray = Utils.toArray(metadataBytes);
-        String nodeType = objectMapper.readTree(metadataBytearray).get("node_type").asText();
+        String nodeType = objectMapper.readTree(metadataBytearray)
+                .get("node_type")
+                .asText();
         switch (nodeType) {
             case ArrayMetadata.NODE_TYPE:
-                return new Array(storeHandle, objectMapper.readValue(metadataBytearray, ArrayMetadata.class));
+                return new Array(storeHandle,
+                        objectMapper.readValue(metadataBytearray, ArrayMetadata.class));
             case GroupMetadata.NODE_TYPE:
-                return new Group(storeHandle, objectMapper.readValue(metadataBytearray, GroupMetadata.class));
+                return new Group(storeHandle,
+                        objectMapper.readValue(metadataBytearray, GroupMetadata.class));
             default:
                 throw new ZarrException("Unsupported node_type '" + nodeType + "' at " + storeHandle);
         }

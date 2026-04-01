@@ -3,7 +3,25 @@ package dev.zarr.zarrjava.v2;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 public enum DataType implements dev.zarr.zarrjava.core.DataType {
-    BOOL("b1", Endianness.UNSPECIFIED), INT8("i1", Endianness.UNSPECIFIED), INT16("i2", Endianness.LITTLE), INT32("i4", Endianness.LITTLE), INT64("i8", Endianness.LITTLE), UINT8("u1", Endianness.UNSPECIFIED), UINT16("u2", Endianness.LITTLE), UINT32("u4", Endianness.LITTLE), UINT64("u8", Endianness.LITTLE), FLOAT32("f4", Endianness.LITTLE), FLOAT64("f8", Endianness.LITTLE), INT16_BE("i2", Endianness.BIG), INT32_BE("i4", Endianness.BIG), INT64_BE("i8", Endianness.BIG), UINT16_BE("u2", Endianness.BIG), UINT32_BE("u4", Endianness.BIG), UINT64_BE("u8", Endianness.BIG), FLOAT32_BE("f4", Endianness.BIG), FLOAT64_BE("f8", Endianness.BIG);
+    BOOL("b1", Endianness.UNSPECIFIED),
+    INT8("i1", Endianness.UNSPECIFIED),
+    INT16("i2", Endianness.LITTLE),
+    INT32("i4", Endianness.LITTLE),
+    INT64("i8", Endianness.LITTLE),
+    UINT8("u1", Endianness.UNSPECIFIED),
+    UINT16("u2", Endianness.LITTLE),
+    UINT32("u4", Endianness.LITTLE),
+    UINT64("u8", Endianness.LITTLE),
+    FLOAT32("f4", Endianness.LITTLE),
+    FLOAT64("f8", Endianness.LITTLE),
+    INT16_BE("i2", Endianness.BIG),
+    INT32_BE("i4", Endianness.BIG),
+    INT64_BE("i8", Endianness.BIG),
+    UINT16_BE("u2", Endianness.BIG),
+    UINT32_BE("u4", Endianness.BIG),
+    UINT64_BE("u8", Endianness.BIG),
+    FLOAT32_BE("f4", Endianness.BIG),
+    FLOAT64_BE("f8", Endianness.BIG);
 
     private final String dtype;
     private final Endianness endianness;

@@ -25,7 +25,7 @@ public class TransposeCodec extends ArrayArrayCodec implements Codec {
 
     @JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
     public TransposeCodec(
-                          @Nonnull @JsonProperty(value = "configuration", required = true) Configuration configuration
+            @Nonnull @JsonProperty(value = "configuration", required = true) Configuration configuration
     ) {
         this.configuration = configuration;
     }
@@ -57,7 +57,8 @@ public class TransposeCodec extends ArrayArrayCodec implements Codec {
     }
 
     @Override
-    public long computeEncodedSize(long inputByteLength, ArrayMetadata.CoreArrayMetadata arrayMetadata) throws ZarrException {
+    public long computeEncodedSize(long inputByteLength,
+                                   ArrayMetadata.CoreArrayMetadata arrayMetadata) throws ZarrException {
         return inputByteLength;
     }
 
@@ -71,11 +72,13 @@ public class TransposeCodec extends ArrayArrayCodec implements Codec {
 
         //only chunk shape gets transformed, the outer shape stays the same
         long[] transposedArrayShape = new long[arrayMetadata.ndim()];
-        Arrays.setAll(transposedArrayShape,
-                i -> arrayMetadata.shape[i] / arrayMetadata.chunkShape[i] * transposedArrayShape[i]);
+        Arrays.setAll(transposedArrayShape, i -> arrayMetadata.shape[i] / arrayMetadata.chunkShape[i] * transposedArrayShape[i]);
 
         return new ArrayMetadata.CoreArrayMetadata(
-                transposedArrayShape, transposedChunkShape, arrayMetadata.dataType, arrayMetadata.parsedFillValue
+                transposedArrayShape,
+                transposedChunkShape,
+                arrayMetadata.dataType,
+                arrayMetadata.parsedFillValue
         );
     }
 

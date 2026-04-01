@@ -41,7 +41,7 @@ public class ReadOnlyZipStore extends ZipStore {
     private boolean isCached = false;
 
 
-// Main constructor: receives a StoreHandle directly
+    // Main constructor: receives a StoreHandle directly
     public ReadOnlyZipStore(@Nonnull StoreHandle handle) {
         super(handle);
         zipStorePath = underlyingStore.toPath(); // throws if not FilesystemStore
@@ -355,7 +355,7 @@ public class ReadOnlyZipStore extends ZipStore {
         }
     }
 
-// Returns all descendant files and in string avoid prefixZarrPath
+    // Returns all descendant files and in string avoid prefixZarrPath
     @Override
     public Stream<String[]> list(String[] prefixZarrPath) {
         ensureCache();
@@ -382,7 +382,7 @@ public class ReadOnlyZipStore extends ZipStore {
         return builder.build();
     }
 
-//Returns both file and directory children of the given prefix path, but only one level deep (no recursion)
+    //Returns both file and directory children of the given prefix path, but only one level deep (no recursion)
     @Override
     public Stream<String> listChildren(String[] prefixKeys) {
         ensureCache();

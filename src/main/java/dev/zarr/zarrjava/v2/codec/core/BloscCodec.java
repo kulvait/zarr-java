@@ -38,7 +38,14 @@ public class BloscCodec extends dev.zarr.zarrjava.core.codec.core.BloscCodec imp
 
     @JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
     public BloscCodec(
-                      @Nonnull @JsonProperty(value = "cname", defaultValue = "zstd") @JsonDeserialize(using = CustomCompressorDeserializer.class) Blosc.Compressor cname, @Nonnull @JsonProperty(value = "shuffle", defaultValue = "noshuffle") @JsonDeserialize(using = CustomShuffleDeserializer.class) Blosc.Shuffle shuffle, @JsonProperty(value = "clevel", defaultValue = "5") int clevel, @JsonProperty(value = "typesize", defaultValue = "0") int typesize, @JsonProperty(value = "blocksize", defaultValue = "0") int blocksize
+            @Nonnull @JsonProperty(value = "cname", defaultValue = "zstd")
+            @JsonDeserialize(using = CustomCompressorDeserializer.class)
+            Blosc.Compressor cname,
+            @Nonnull @JsonProperty(value = "shuffle", defaultValue = "noshuffle")
+            @JsonDeserialize(using = CustomShuffleDeserializer.class) Blosc.Shuffle shuffle,
+            @JsonProperty(value = "clevel", defaultValue = "5") int clevel,
+            @JsonProperty(value = "typesize", defaultValue = "0") int typesize,
+            @JsonProperty(value = "blocksize", defaultValue = "0") int blocksize
     ) throws ZarrException {
         if (clevel < 0 || clevel > 9) {
             throw new ZarrException("'clevel' needs to be between 0 and 9.");
@@ -51,7 +58,8 @@ public class BloscCodec extends dev.zarr.zarrjava.core.codec.core.BloscCodec imp
     }
 
     @Override
-    public ByteBuffer encode(ByteBuffer chunkBytes) throws ZarrException {
+    public ByteBuffer encode(ByteBuffer chunkBytes)
+            throws ZarrException {
         try {
             return ByteBuffer.wrap(
                     Blosc.compress(Utils.toArray(chunkBytes), this.typesize, this.cname,
@@ -67,7 +75,11 @@ public class BloscCodec extends dev.zarr.zarrjava.core.codec.core.BloscCodec imp
     public BloscCodec evolveFromCoreArrayMetadata(ArrayMetadata.CoreArrayMetadata arrayMetadata) throws ZarrException {
         if (typesize == 0) {
             return new BloscCodec(
-                    this.cname, this.shuffle, this.clevel, arrayMetadata.dataType.getByteCount(), this.blocksize
+                    this.cname,
+                    this.shuffle,
+                    this.clevel,
+                    arrayMetadata.dataType.getByteCount(),
+                    this.blocksize
             );
         }
         return this;
@@ -84,7 +96,9 @@ public class BloscCodec extends dev.zarr.zarrjava.core.codec.core.BloscCodec imp
         }
 
         @Override
-        public void serialize(Blosc.Shuffle shuffle, JsonGenerator generator, SerializerProvider provider) throws IOException {
+        public void serialize(Blosc.Shuffle shuffle, JsonGenerator generator,
+                              SerializerProvider provider)
+                throws IOException {
             generator.writeNumber(shuffle.ordinal());
         }
     }
@@ -100,8 +114,10 @@ public class BloscCodec extends dev.zarr.zarrjava.core.codec.core.BloscCodec imp
         }
 
         @Override
-        public Blosc.Shuffle deserialize(JsonParser jsonParser, DeserializationContext ctxt) throws IOException {
-            int shuffle = jsonParser.getCodec().readValue(jsonParser, int.class);
+        public Blosc.Shuffle deserialize(JsonParser jsonParser, DeserializationContext ctxt)
+                throws IOException {
+            int shuffle = jsonParser.getCodec()
+                    .readValue(jsonParser, int.class);
             return Blosc.Shuffle.values()[shuffle];
         }
     }

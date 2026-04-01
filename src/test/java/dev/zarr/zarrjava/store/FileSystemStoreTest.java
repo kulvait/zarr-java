@@ -45,7 +45,7 @@ public class FileSystemStoreTest extends WritableStoreTest {
         Assertions.assertTrue(groupMetadataString.contains("\"node_type\":\"group\""));
 
         ArrayMetadata arrayMetadata = objectMapper.readValue(Files.readAllBytes(TESTDATA.resolve(
-                "l4_sample").resolve("color").resolve("1").resolve("zarr.json")),
+                        "l4_sample").resolve("color").resolve("1").resolve("zarr.json")),
                 dev.zarr.zarrjava.v3.ArrayMetadata.class);
 
         String arrayMetadataString = objectMapper.writeValueAsString(arrayMetadata);
@@ -58,8 +58,7 @@ public class FileSystemStoreTest extends WritableStoreTest {
         Node[] subNodes = Group.open(fsStore.resolve("l4_sample")).list().toArray(Node[]::new);
         Assertions.assertEquals(12, subNodes.length);
 
-        Array[] colorSubNodes = ((Group) Group.open(fsStore.resolve("l4_sample")).get("color")).list().toArray(
-                Array[]::new);
+        Array[] colorSubNodes = ((Group) Group.open(fsStore.resolve("l4_sample")).get("color")).list().toArray(Array[]::new);
 
         Assertions.assertEquals(5, colorSubNodes.length);
         Assertions.assertInstanceOf(Array.class, colorSubNodes[0]);
@@ -95,8 +94,7 @@ public class FileSystemStoreTest extends WritableStoreTest {
         Assertions.assertTrue(exceptionThrown, "Should have thrown IllegalArgumentException for path traversal");
 
         Path targetFile = TESTOUTPUT.resolve("testPathTraversal").resolve("outside.txt");
-        Assertions.assertFalse(Files.exists(targetFile),
-                "Path Traversal Vulnerability detected: File written outside store root!");
+        Assertions.assertFalse(Files.exists(targetFile), "Path Traversal Vulnerability detected: File written outside store root!");
     }
 
     @Test

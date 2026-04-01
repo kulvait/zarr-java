@@ -41,17 +41,23 @@ public class S3StoreTest extends WritableStoreTest {
 
     @BeforeAll
     void setUpS3Client() throws ZarrException, IOException {
-        s3Client = S3Client.builder().endpointOverride(URI.create(s3Endpoint)).region(Region.US_EAST_1) // required, but ignored
-                           .serviceConfiguration(
-                                   S3Configuration.builder().pathStyleAccessEnabled(true) // required
-                                                  .build()
-                           ).credentialsProvider(StaticCredentialsProvider.create(
-                                   AwsBasicCredentials.create("accessKey", "secretKey")
-                           )).build();
+        s3Client = S3Client.builder()
+                .endpointOverride(URI.create(s3Endpoint))
+                .region(Region.US_EAST_1) // required, but ignored
+                .serviceConfiguration(
+                        S3Configuration.builder()
+                                .pathStyleAccessEnabled(true) // required
+                                .build()
+                )
+                .credentialsProvider(StaticCredentialsProvider.create(
+                        AwsBasicCredentials.create("accessKey", "secretKey")
+                ))
+                .build();
         // Clean up the bucket
         try {
-            s3Client.listObjectsV2Paginator(builder -> builder.bucket(bucketName).build()).contents().forEach(
-                    s3Object -> {
+            s3Client.listObjectsV2Paginator(builder -> builder.bucket(bucketName).build())
+                    .contents()
+                    .forEach(s3Object -> {
                         s3Client.deleteObject(builder -> builder.bucket(bucketName).key(s3Object.key()).build());
                     });
         } catch (Exception e) {
@@ -86,8 +92,7 @@ public class S3StoreTest extends WritableStoreTest {
     @Override
     StoreHandle storeHandleWithData() {
         try (InputStream byteStream = new ByteArrayInputStream(testData())) {
-            s3Client.putObject(PutObjectRequest.builder().bucket(bucketName).key("/" + testDataKey).build(),
-                    RequestBody.fromContentProvider(() -> byteStream, "application/octet-stream"));
+            s3Client.putObject(PutObjectRequest.builder().bucket(bucketName).key("/" + testDataKey).build(), RequestBody.fromContentProvider(() -> byteStream, "application/octet-stream"));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

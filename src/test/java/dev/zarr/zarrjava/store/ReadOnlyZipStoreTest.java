@@ -48,10 +48,12 @@ public class ReadOnlyZipStoreTest extends StoreTest {
         ReadOnlyZipStore zipStore = new ReadOnlyZipStore(storePath);
         BufferedZipStore bufferedZipStore = new BufferedZipStore(storePath);
 
-        Set<String> expectedKeys = bufferedZipStore.resolve().listChildren().map(node -> String.join("/",
-                node)).collect(Collectors.toSet());
-        Set<String> actualKeys = zipStore.resolve().listChildren().map(node -> String.join("/", node)).collect(
-                Collectors.toSet());
+        Set<String> expectedKeys = bufferedZipStore.resolve().listChildren()
+                .map(node -> String.join("/", node))
+                .collect(Collectors.toSet());
+        Set<String> actualKeys = zipStore.resolve().listChildren()
+                .map(node -> String.join("/", node))
+                .collect(Collectors.toSet());
 
         Assertions.assertFalse(actualKeys.isEmpty());
         Assertions.assertEquals(expectedKeys, actualKeys);
@@ -63,10 +65,12 @@ public class ReadOnlyZipStoreTest extends StoreTest {
         ReadOnlyZipStore zipStore = new ReadOnlyZipStore(storePath);
         BufferedZipStore bufferedZipStore = new BufferedZipStore(storePath);
 
-        Set<String> expectedKeys = bufferedZipStore.resolve().list().map(node -> String.join("/", node)).collect(
-                Collectors.toSet());
-        Set<String> actualKeys = zipStore.resolve().list().map(node -> String.join("/", node)).collect(
-                Collectors.toSet());
+        Set<String> expectedKeys = bufferedZipStore.resolve().list()
+                .map(node -> String.join("/", node))
+                .collect(Collectors.toSet());
+        Set<String> actualKeys = zipStore.resolve().list()
+                .map(node -> String.join("/", node))
+                .collect(Collectors.toSet());
         Assertions.assertEquals(expectedKeys, actualKeys);
     }
 
@@ -93,8 +97,7 @@ public class ReadOnlyZipStoreTest extends StoreTest {
         zipStore.flush();
 
         ReadOnlyZipStore readOnlyZipStore = new ReadOnlyZipStore(path);
-        Assertions.assertEquals(archiveComment, readOnlyZipStore.getArchiveComment(),
-                "ZIP archive comment from ReadOnlyZipStore does not match expected value.");
+        Assertions.assertEquals(archiveComment, readOnlyZipStore.getArchiveComment(), "ZIP archive comment from ReadOnlyZipStore does not match expected value.");
 
         Set<String> expectedSubgroupKeys = new HashSet<>(Arrays.asList(
                 "array/c/1/1",
@@ -105,8 +108,9 @@ public class ReadOnlyZipStoreTest extends StoreTest {
                 "array/zarr.json"
         ));
 
-        Set<String> actualKeys = readOnlyZipStore.resolve("subgroup").list().map(node -> String.join("/",
-                node)).collect(Collectors.toSet());
+        Set<String> actualKeys = readOnlyZipStore.resolve("subgroup").list()
+                .map(node -> String.join("/", node))
+                .collect(Collectors.toSet());
 
         Assertions.assertEquals(expectedSubgroupKeys, actualKeys);
 

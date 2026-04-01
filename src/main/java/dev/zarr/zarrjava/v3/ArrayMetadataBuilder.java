@@ -23,7 +23,8 @@ public class ArrayMetadataBuilder {
     long[] shape = null;
     DataType dataType = null;
     ChunkGrid chunkGrid = null;
-    ChunkKeyEncoding chunkKeyEncoding = new DefaultChunkKeyEncoding(new DefaultChunkKeyEncoding.Configuration(Separator.SLASH));
+    ChunkKeyEncoding chunkKeyEncoding =
+            new DefaultChunkKeyEncoding(new DefaultChunkKeyEncoding.Configuration(Separator.SLASH));
 
     Object fillValue = 0;
     Codec[] codecs = new Codec[]{new BytesCodec(Endian.LITTLE)};
@@ -87,8 +88,9 @@ public class ArrayMetadataBuilder {
     }
 
     public ArrayMetadataBuilder withDefaultChunkKeyEncoding(String separator) {
-        this.chunkKeyEncoding = new DefaultChunkKeyEncoding(
-                new DefaultChunkKeyEncoding.Configuration(Separator.valueOf(separator)));
+        this.chunkKeyEncoding =
+                new DefaultChunkKeyEncoding(
+                        new DefaultChunkKeyEncoding.Configuration(Separator.valueOf(separator)));
         return this;
     }
 
@@ -104,8 +106,8 @@ public class ArrayMetadataBuilder {
     }
 
     public ArrayMetadataBuilder withV2ChunkKeyEncoding(String separator) {
-        this.chunkKeyEncoding = new V2ChunkKeyEncoding(new V2ChunkKeyEncoding.Configuration(Separator.valueOf(
-                separator)));
+        this.chunkKeyEncoding =
+                new V2ChunkKeyEncoding(new V2ChunkKeyEncoding.Configuration(Separator.valueOf(separator)));
         return this;
     }
 
@@ -124,7 +126,8 @@ public class ArrayMetadataBuilder {
             throw new IllegalStateException("Please call `withDataType` first.");
         }
         CodecBuilder nestedCodecBuilder = new CodecBuilder(dataType);
-        this.codecs = codecBuilder.apply(nestedCodecBuilder).build();
+        this.codecs = codecBuilder.apply(nestedCodecBuilder)
+                .build();
         return this;
     }
 
@@ -159,14 +162,17 @@ public class ArrayMetadataBuilder {
         if (dataType == null) {
             throw new ZarrException("Data type needs to be provided. Please call `.withDataType`.");
         }
-
+        
         // If chunk grid is not specified, calculate default chunks
         if (chunkGrid == null) {
             int[] defaultChunks = Utils.calculateDefaultChunks(shape);
             chunkGrid = new RegularChunkGrid(new RegularChunkGrid.Configuration(defaultChunks));
         }
-
-        return new ArrayMetadata(shape, dataType, chunkGrid, chunkKeyEncoding, fillValue, codecs, dimensionNames, attributes, storageTransformers
+        
+        return new ArrayMetadata(shape, dataType, chunkGrid, chunkKeyEncoding, fillValue, codecs,
+                dimensionNames,
+                attributes,
+                storageTransformers
         );
     }
 }

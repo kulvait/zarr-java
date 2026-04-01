@@ -52,15 +52,32 @@ public final class ArrayMetadata extends dev.zarr.zarrjava.core.ArrayMetadata {
     public CoreArrayMetadata coreArrayMetadata;
 
     public ArrayMetadata(
-                         long[] shape, DataType dataType, ChunkGrid chunkGrid, ChunkKeyEncoding chunkKeyEncoding, Object fillValue, @Nonnull Codec[] codecs, @Nullable String[] dimensionNames, @Nullable Attributes attributes, @Nullable Map<String, Object>[] storageTransformers
+            long[] shape, DataType dataType, ChunkGrid chunkGrid, ChunkKeyEncoding chunkKeyEncoding,
+            Object fillValue,
+            @Nonnull Codec[] codecs,
+            @Nullable String[] dimensionNames,
+            @Nullable Attributes attributes,
+            @Nullable Map<String, Object>[] storageTransformers
     ) throws ZarrException {
-        this(ZARR_FORMAT, NODE_TYPE, shape, dataType, chunkGrid, chunkKeyEncoding, fillValue, codecs, dimensionNames, attributes, storageTransformers
+        this(ZARR_FORMAT, NODE_TYPE, shape, dataType, chunkGrid, chunkKeyEncoding, fillValue, codecs,
+                dimensionNames,
+                attributes, storageTransformers
         );
     }
 
     @JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
     public ArrayMetadata(
-                         @JsonProperty(value = "zarr_format", required = true) int zarrFormat, @JsonProperty(value = "node_type", required = true) String nodeType, @JsonProperty(value = "shape", required = true) long[] shape, @JsonProperty(value = "data_type", required = true) DataType dataType, @JsonProperty(value = "chunk_grid", required = true) ChunkGrid chunkGrid, @JsonProperty(value = "chunk_key_encoding", required = true) ChunkKeyEncoding chunkKeyEncoding, @JsonProperty(value = "fill_value", required = true) Object fillValue, @Nonnull @JsonProperty(value = "codecs") Codec[] codecs, @Nullable @JsonProperty(value = "dimension_names") String[] dimensionNames, @Nullable @JsonProperty(value = "attributes") Attributes attributes, @Nullable @JsonProperty(value = "storage_transformers") Map<String, Object>[] storageTransformers
+            @JsonProperty(value = "zarr_format", required = true) int zarrFormat,
+            @JsonProperty(value = "node_type", required = true) String nodeType,
+            @JsonProperty(value = "shape", required = true) long[] shape,
+            @JsonProperty(value = "data_type", required = true) DataType dataType,
+            @JsonProperty(value = "chunk_grid", required = true) ChunkGrid chunkGrid,
+            @JsonProperty(value = "chunk_key_encoding", required = true) ChunkKeyEncoding chunkKeyEncoding,
+            @JsonProperty(value = "fill_value", required = true) Object fillValue,
+            @Nonnull @JsonProperty(value = "codecs") Codec[] codecs,
+            @Nullable @JsonProperty(value = "dimension_names") String[] dimensionNames,
+            @Nullable @JsonProperty(value = "attributes") Attributes attributes,
+            @Nullable @JsonProperty(value = "storage_transformers") Map<String, Object>[] storageTransformers
     ) throws ZarrException {
         super(shape, fillValue, dataType);
         if (zarrFormat != this.zarrFormat) {
@@ -78,7 +95,8 @@ public final class ArrayMetadata extends dev.zarr.zarrjava.core.ArrayMetadata {
         if (chunkGrid instanceof RegularChunkGrid) {
             int[] chunkShape = ((RegularChunkGrid) chunkGrid).configuration.chunkShape;
             if (shape.length != chunkShape.length) {
-                throw new ZarrException("Shape (ndim=" + shape.length + ") and chunk shape (ndim=" + chunkShape.length + ") need to have the same number of dimensions.");
+                throw new ZarrException("Shape (ndim=" + shape.length + ") and chunk shape (ndim=" +
+                        chunkShape.length + ") need to have the same number of dimensions.");
             }
 
             Optional<Codec> shardingCodec = getShardingIndexedCodec(codecs);
@@ -87,13 +105,10 @@ public final class ArrayMetadata extends dev.zarr.zarrjava.core.ArrayMetadata {
                 ShardingIndexedCodec.Configuration shardingConfig = ((ShardingIndexedCodec) shardingCodec.get()).configuration;
                 int[] innerChunkShape = shardingConfig.chunkShape;
                 if (outerChunkShape.length != innerChunkShape.length)
-                    throw new ZarrException("Sharding dimensions mismatch of outer chunk shape " + Arrays.toString(
-                            outerChunkShape) + " and inner chunk shape" + Arrays.toString(innerChunkShape));
+                    throw new ZarrException("Sharding dimensions mismatch of outer chunk shape " + Arrays.toString(outerChunkShape) + " and inner chunk shape" + Arrays.toString(innerChunkShape));
                 for (int i = 0; i < outerChunkShape.length; i++) {
                     if (outerChunkShape[i] % innerChunkShape[i] != 0)
-                        throw new ZarrException("Sharding inner chunk shape " + Arrays.toString(
-                                innerChunkShape) + " does not evenly divide the outer chunk size " + Arrays.toString(
-                                        outerChunkShape));
+                        throw new ZarrException("Sharding inner chunk shape " + Arrays.toString(innerChunkShape) + " does not evenly divide the outer chunk size " + Arrays.toString(outerChunkShape));
                 }
                 outerChunkShape = innerChunkShape;
                 shardingCodec = getShardingIndexedCodec(shardingConfig.codecs);
@@ -101,8 +116,11 @@ public final class ArrayMetadata extends dev.zarr.zarrjava.core.ArrayMetadata {
         }
         this.chunkGrid = chunkGrid;
         this.dataType = dataType;
-        this.coreArrayMetadata = new CoreArrayMetadata(this.shape, ((RegularChunkGrid) chunkGrid).configuration.chunkShape, this.dataType, this.parsedFillValue
-        );
+        this.coreArrayMetadata =
+                new CoreArrayMetadata(this.shape, ((RegularChunkGrid) chunkGrid).configuration.chunkShape,
+                        this.dataType,
+                        this.parsedFillValue
+                );
 
         this.chunkKeyEncoding = chunkKeyEncoding;
         this.codecs = codecs;

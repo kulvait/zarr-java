@@ -97,8 +97,7 @@ public class BufferedZipStoreTest extends WritableStoreTest {
             Assertions.assertEquals(comment, retrievedComment, "ZIP archive comment does not match expected value.");
         }
 
-        Assertions.assertEquals(comment, new BufferedZipStore(path).getArchiveComment(),
-                "ZIP archive comment from store does not match expected value.");
+        Assertions.assertEquals(comment, new BufferedZipStore(path).getArchiveComment(), "ZIP archive comment from store does not match expected value.");
     }
 
     /**
@@ -112,8 +111,10 @@ public class BufferedZipStoreTest extends WritableStoreTest {
         BufferedZipStore zipStore = new BufferedZipStore(path);
 
         dev.zarr.zarrjava.v3.Group group = dev.zarr.zarrjava.v3.Group.create(zipStore.resolve());
-        Array array = group.createArray("a1", b -> b.withShape(1024, 1024).withDataType(
-                dev.zarr.zarrjava.v3.DataType.UINT32).withChunkShape(512, 512)
+        Array array = group.createArray("a1", b -> b
+                .withShape(1024, 1024)
+                .withDataType(dev.zarr.zarrjava.v3.DataType.UINT32)
+                .withChunkShape(512, 512)
         );
         array.write(ucar.ma2.Array.factory(ucar.ma2.DataType.UINT, new int[]{1024, 1024}, testDataInt()), true);
 
@@ -134,13 +135,23 @@ public class BufferedZipStoreTest extends WritableStoreTest {
             }
 
             // correct order of zarr.json files
-            String[] expectedFirstEntries = new String[]{"zarr.json", "a1/zarr.json", "g1/zarr.json", "g2/zarr.json", "g3/zarr.json", "g1/g1_1/zarr.json", "g1/g1_2/zarr.json", "g2/g2_1/zarr.json", "g1/g1_1/g1_1_1/zarr.json"
+            String[] expectedFirstEntries = new String[]{
+                    "zarr.json",
+                    "a1/zarr.json",
+                    "g1/zarr.json",
+                    "g2/zarr.json",
+                    "g3/zarr.json",
+                    "g1/g1_1/zarr.json",
+                    "g1/g1_2/zarr.json",
+                    "g2/g2_1/zarr.json",
+                    "g1/g1_1/g1_1_1/zarr.json"
             };
-            String[] actualFirstEntries = entries.stream().map(ZipArchiveEntry::getName).limit(
-                    expectedFirstEntries.length).toArray(String[]::new);
+            String[] actualFirstEntries = entries.stream()
+                    .map(ZipArchiveEntry::getName)
+                    .limit(expectedFirstEntries.length)
+                    .toArray(String[]::new);
 
-            Assertions.assertArrayEquals(expectedFirstEntries, actualFirstEntries,
-                    "zarr.json files are not in the expected breadth-first order");
+            Assertions.assertArrayEquals(expectedFirstEntries, actualFirstEntries, "zarr.json files are not in the expected breadth-first order");
         }
     }
 

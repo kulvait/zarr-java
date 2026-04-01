@@ -102,7 +102,8 @@ public class Attributes extends HashMap<String, Object> {
         }
         if (value instanceof List) {
             List<?> list = (List<?>) value;
-            @SuppressWarnings("unchecked") T[] array = (T[]) java.lang.reflect.Array.newInstance(clazz, list.size());
+            @SuppressWarnings("unchecked")
+            T[] array = (T[]) java.lang.reflect.Array.newInstance(clazz, list.size());
             for (int i = 0; i < list.size(); i++) {
                 Object elem = list.get(i);
                 if (clazz.isInstance(elem)) {

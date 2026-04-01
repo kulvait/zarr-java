@@ -31,12 +31,13 @@ public class BloscCodec extends dev.zarr.zarrjava.core.codec.core.BloscCodec imp
 
     @JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
     public BloscCodec(
-                      @Nonnull @JsonProperty(value = "configuration", required = true) Configuration configuration) {
+            @Nonnull @JsonProperty(value = "configuration", required = true) Configuration configuration) {
         this.configuration = configuration;
     }
 
     @Override
-    public ByteBuffer encode(ByteBuffer chunkBytes) throws ZarrException {
+    public ByteBuffer encode(ByteBuffer chunkBytes)
+            throws ZarrException {
         try {
             return ByteBuffer.wrap(
                     Blosc.compress(Utils.toArray(chunkBytes), configuration.typesize, configuration.cname,
@@ -49,7 +50,8 @@ public class BloscCodec extends dev.zarr.zarrjava.core.codec.core.BloscCodec imp
     }
 
     @Override
-    public long computeEncodedSize(long inputByteLength, ArrayMetadata.CoreArrayMetadata arrayMetadata) throws ZarrException {
+    public long computeEncodedSize(long inputByteLength,
+                                   ArrayMetadata.CoreArrayMetadata arrayMetadata) throws ZarrException {
         throw new ZarrException("Not implemented for Blosc codec.");
     }
 
@@ -64,7 +66,9 @@ public class BloscCodec extends dev.zarr.zarrjava.core.codec.core.BloscCodec imp
         }
 
         @Override
-        public void serialize(Blosc.Shuffle shuffle, JsonGenerator generator, SerializerProvider provider) throws IOException {
+        public void serialize(Blosc.Shuffle shuffle, JsonGenerator generator,
+                              SerializerProvider provider)
+                throws IOException {
             switch (shuffle) {
                 case NO_SHUFFLE:
                     generator.writeString("noshuffle");
@@ -90,8 +94,10 @@ public class BloscCodec extends dev.zarr.zarrjava.core.codec.core.BloscCodec imp
         }
 
         @Override
-        public Blosc.Shuffle deserialize(JsonParser jsonParser, DeserializationContext ctxt) throws IOException {
-            String shuffle = jsonParser.getCodec().readValue(jsonParser, String.class);
+        public Blosc.Shuffle deserialize(JsonParser jsonParser, DeserializationContext ctxt)
+                throws IOException {
+            String shuffle = jsonParser.getCodec()
+                    .readValue(jsonParser, String.class);
             switch (shuffle) {
                 case "noshuffle":
                     return Blosc.Shuffle.NO_SHUFFLE;
@@ -101,7 +107,8 @@ public class BloscCodec extends dev.zarr.zarrjava.core.codec.core.BloscCodec imp
                     return Blosc.Shuffle.BYTE_SHUFFLE;
                 default:
                     throw new JsonParseException(
-                            jsonParser, String.format(
+                            jsonParser,
+                            String.format(
                                     "Could not parse the value for Blosc.Shuffle." + " Got '%s'",
                                     shuffle
                             )
@@ -124,7 +131,15 @@ public class BloscCodec extends dev.zarr.zarrjava.core.codec.core.BloscCodec imp
 
         @JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
         public Configuration(
-                             @Nonnull @JsonProperty(value = "cname", defaultValue = "zstd") @JsonDeserialize(using = BloscCodec.CustomCompressorDeserializer.class) Blosc.Compressor cname, @Nonnull @JsonProperty(value = "shuffle", defaultValue = "noshuffle") @JsonDeserialize(using = BloscCodec.CustomShuffleDeserializer.class) Blosc.Shuffle shuffle, @JsonProperty(value = "clevel", defaultValue = "5") int clevel, @JsonProperty(value = "typesize", defaultValue = "0") int typesize, @JsonProperty(value = "blocksize", defaultValue = "0") int blocksize
+                @Nonnull @JsonProperty(value = "cname", defaultValue = "zstd")
+                @JsonDeserialize(using = BloscCodec.CustomCompressorDeserializer.class)
+                Blosc.Compressor cname,
+                @Nonnull @JsonProperty(value = "shuffle", defaultValue = "noshuffle")
+                @JsonDeserialize(using = BloscCodec.CustomShuffleDeserializer.class) Blosc.Shuffle shuffle,
+                @JsonProperty(value = "clevel", defaultValue = "5") int clevel,
+                @JsonProperty(value = "typesize", defaultValue = "0") int typesize,
+                @JsonProperty(value = "blocksize", defaultValue = "0")
+                int blocksize
         ) throws ZarrException {
             if (typesize < 1 && shuffle != Blosc.Shuffle.NO_SHUFFLE) {
                 throw new ZarrException("'typesize' needs to be larger than 0.");

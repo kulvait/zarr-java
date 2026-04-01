@@ -3,7 +3,8 @@ package dev.zarr.zarrjava.core.chunkkeyencoding;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 public enum Separator {
-    SLASH("/"), DOT(".");
+    SLASH("/"),
+    DOT(".");
 
     private final String value;
 

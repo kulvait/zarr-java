@@ -80,7 +80,8 @@ public class ArrayMetadataBuilder {
     }
 
     public ArrayMetadataBuilder withBloscCompressor(
-                                                    Blosc.Compressor cname, Blosc.Shuffle shuffle, int clevel, int typeSize, int blockSize
+            Blosc.Compressor cname, Blosc.Shuffle shuffle, int clevel, int typeSize,
+            int blockSize
     ) {
         try {
             this.compressor = new BloscCodec(cname, shuffle, clevel, typeSize, blockSize);
@@ -156,7 +157,16 @@ public class ArrayMetadataBuilder {
         }
 
         return new ArrayMetadata(
-                2, shape, chunks, dataType, fillValue, order, filters, compressor, dimensionSeparator, attributes
+                2,
+                shape,
+                chunks,
+                dataType,
+                fillValue,
+                order,
+                filters,
+                compressor,
+                dimensionSeparator,
+                attributes
         );
     }
 }
