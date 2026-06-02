@@ -14,33 +14,61 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
- * Lenient Zarr metadata reader. Parses zarr.json / .zarray / .zgroup / .zattrs as
- * a generic JSON tree, so it works even if codecs (e.g. imagecodecs_jpeg2k) are
- * unknown to zarr-java's CodecRegistry or fail CodecPipeline validation.
+ * Lenient Zarr metadata reader. Parses {@code zarr.json} / {@code .zarray} /
+ * {@code .zgroup} / {@code .zattrs} as a generic JSON tree, so it works even if
+ * codecs (e.g. {@code imagecodecs_jpeg2k}) are unknown to zarr-java's
+ * {@code CodecRegistry} or fail {@code CodecPipeline} validation.
  *
- * Only fields that are useful without instantiating codecs are exposed:
- *   - shape, chunkShape, dataType  (mirrors ArrayMetadata.shape / dataType() / chunkShape())
- *   - fillValue, dimensionNames, attributes
- *   - raw codecs JSON (so you can inspect compression info if you want)
- *   - the entire raw JSON tree as a fallback
+ * <p>Only fields that are useful without instantiating codecs are exposed:
+ * <ul>
+ *   <li>{@code shape}, {@code chunkShape}, {@code dataType} (mirrors
+ *       {@link ArrayMetadata#shape} / {@link ArrayMetadata#dataType()} /
+ *       {@link ArrayMetadata#chunkShape()})</li>
+ *   <li>{@code fillValue}, {@code dimensionNames}, {@code attributes}</li>
+ *   <li>raw codecs JSON (so you can inspect compression info if you want)</li>
+ *   <li>the entire raw JSON tree as a fallback</li>
+ * </ul>
  */
 public final class LenientMetadata {
 
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
-    public enum NodeType { ARRAY, GROUP }
+    /** Whether the metadata at a location describes an array or a group. */
+    public enum NodeType {
+        /** A Zarr array node. */
+        ARRAY,
+        /** A Zarr group node. */
+        GROUP
+    }
 
+    /**
+     * Lenient view of a Zarr array's metadata, populated from raw JSON without
+     * instantiating codecs.
+     */
     public static final class ArrayInfo {
-        public final int zarrFormat;             // 2 or 3
+        /** Zarr format version: {@code 2} or {@code 3}. */
+        public final int zarrFormat;
+        /** Array shape, in elements per dimension. */
         public final long[] shape;
+        /** Chunk shape, in elements per dimension. */
         public final int[] chunkShape;
-        public final String dataTypeRaw;         // raw string from JSON ("uint16", "<u2", ...)
-        public final DataType dataType;          // best-effort mapping to v3 DataType, or null
-        public final Object fillValue;           // raw JSON value
-        public final String[] dimensionNames;    // v3 only, may be null
-        public final Map<String, Object> attributes; // never null, possibly empty
-        public final JsonNode codecsRaw;         // v3: codecs array; v2: synthesized [filters..., compressor]
-        public final JsonNode rawJson;           // entire metadata document
+        /** Raw data type string from JSON (e.g. {@code "uint16"}, {@code "<u2"}). */
+        public final String dataTypeRaw;
+        /** Best-effort mapping of {@link #dataTypeRaw} to {@link DataType}, or {@code null} if unknown. */
+        public final DataType dataType;
+        /** Raw fill value as decoded from JSON, or {@code null}. */
+        public final Object fillValue;
+        /** Dimension names (v3 only); may be {@code null}. */
+        public final String[] dimensionNames;
+        /** User attributes; never {@code null}, possibly empty. */
+        public final Map<String, Object> attributes;
+        /**
+         * Raw codecs JSON. For v3 this is the {@code codecs} array; for v2 this is a
+         * synthesized object containing {@code filters} and/or {@code compressor}.
+         */
+        public final JsonNode codecsRaw;
+        /** The entire metadata document as a JSON tree. */
+        public final JsonNode rawJson;
 
         ArrayInfo(int zarrFormat, long[] shape, int[] chunkShape,
                   String dataTypeRaw, DataType dataType, Object fillValue,
@@ -58,15 +86,38 @@ public final class LenientMetadata {
             this.rawJson = rawJson;
         }
 
-        // Mirrors what your existing code uses on ArrayMetadata:
-        public long[] shape()       { return shape; }
-        public int[]  chunkShape()  { return chunkShape; }
-        public DataType dataType()  { return dataType; }
+        /**
+         * Returns the array shape.
+         *
+         * @return the shape, in elements per dimension
+         */
+        public long[] shape() { return shape; }
+
+        /**
+         * Returns the chunk shape.
+         *
+         * @return the chunk shape, in elements per dimension
+         */
+        public int[] chunkShape() { return chunkShape; }
+
+        /**
+         * Returns the best-effort {@link DataType}, or {@code null} if the dtype
+         * string could not be mapped.
+         *
+         * @return the data type, or {@code null} if unknown
+         */
+        public DataType dataType() { return dataType; }
     }
 
+    /**
+     * Lenient view of a Zarr group's metadata.
+     */
     public static final class GroupInfo {
+        /** Zarr format version: {@code 2} or {@code 3}. */
         public final int zarrFormat;
+        /** User attributes; never {@code null}, possibly empty. */
         public final Map<String, Object> attributes;
+        /** The entire metadata document as a JSON tree. */
         public final JsonNode rawJson;
 
         GroupInfo(int zarrFormat, Map<String, Object> attributes, JsonNode rawJson) {
@@ -76,10 +127,16 @@ public final class LenientMetadata {
         }
     }
 
+    /**
+     * Tagged union of {@link ArrayInfo} and {@link GroupInfo}.
+     */
     public static final class NodeInfo {
+        /** The kind of node. */
         public final NodeType type;
-        public final ArrayInfo array;   // non-null iff type == ARRAY
-        public final GroupInfo group;   // non-null iff type == GROUP
+        /** Non-{@code null} iff {@link #type} is {@link NodeType#ARRAY}. */
+        public final ArrayInfo array;
+        /** Non-{@code null} iff {@link #type} is {@link NodeType#GROUP}. */
+        public final GroupInfo group;
 
         NodeInfo(ArrayInfo a) { this.type = NodeType.ARRAY; this.array = a; this.group = null; }
         NodeInfo(GroupInfo g) { this.type = NodeType.GROUP; this.array = null; this.group = g; }
@@ -87,7 +144,14 @@ public final class LenientMetadata {
 
     private LenientMetadata() {}
 
-    /** Auto-detects v3 vs v2 and array vs group at the given handle. */
+    /**
+     * Auto-detects v3 vs v2 and array vs group at the given handle and reads
+     * the metadata leniently.
+     *
+     * @param handle the storage location of the Zarr node
+     * @return the parsed node info
+     * @throws IOException if no metadata document can be found or it cannot be read
+     */
     public static NodeInfo open(StoreHandle handle) throws IOException {
         StoreHandle v3 = handle.resolve("zarr.json");
         if (v3.exists()) {
@@ -116,7 +180,14 @@ public final class LenientMetadata {
                 "No zarr.json, .zarray or .zgroup found at " + handle);
     }
 
-    /** Convenience: assert ARRAY and return ArrayInfo. */
+    /**
+     * Convenience wrapper around {@link #open(StoreHandle)} that asserts the
+     * node is an array.
+     *
+     * @param handle the storage location of the Zarr array
+     * @return the parsed array info
+     * @throws IOException if the metadata cannot be read or the node is a group
+     */
     public static ArrayInfo openArray(StoreHandle handle) throws IOException {
         NodeInfo n = open(handle);
         if (n.type != NodeType.ARRAY) {
@@ -165,7 +236,7 @@ public final class LenientMetadata {
         DataType dt = parseV2DataType(dtRaw);
         Object fill = jsonToJava(root.get("fill_value"));
 
-        // Synthesize a "codecs"-ish JSON array from filters + compressor for inspection.
+        // Synthesize a "codecs"-ish JSON object from filters + compressor for inspection.
         ObjectNode synth = MAPPER.createObjectNode();
         if (root.has("filters") && !root.get("filters").isNull()) {
             synth.set("filters", root.get("filters"));
@@ -184,7 +255,13 @@ public final class LenientMetadata {
 
     // ---------- helpers ----------
 
-    /** Best-effort mapping from a v3 dtype string to {@link DataType}; null if unknown. */
+    /**
+     * Best-effort mapping from a v3 dtype string (e.g. {@code "uint16"}) to
+     * {@link DataType}.
+     *
+     * @param s the v3 dtype string from the metadata, may be {@code null}
+     * @return the matching {@link DataType}, or {@code null} if unknown
+     */
     public static DataType parseV3DataType(String s) {
         if (s == null) return null;
         for (DataType d : DataType.values()) {
@@ -193,7 +270,17 @@ public final class LenientMetadata {
         return null;
     }
 
-    /** Best-effort mapping from a v2 dtype string ("<u2", "|u1", ">f4", "uint16", ...). */
+    /**
+     * Best-effort mapping from a v2 dtype string to {@link DataType}.
+     *
+     * <p>Accepts both v3-style names (e.g. {@code "uint16"}) and NumPy-style
+     * descriptors with an optional byte-order prefix
+     * ({@code '<'}, {@code '>'}, {@code '|'}, {@code '='}) followed by a kind
+     * and byte count, e.g. {@code "<u2"}, {@code "|u1"}, {@code ">f4"}.
+     *
+     * @param s the v2 dtype string from the metadata, may be {@code null}
+     * @return the matching {@link DataType}, or {@code null} if unknown
+     */
     public static DataType parseV2DataType(String s) {
         if (s == null) return null;
         // Try the v3-style name first.
