@@ -11,6 +11,8 @@ import java.nio.ByteBuffer;
 import java.nio.channels.SeekableByteChannel;
 import java.nio.file.*;
 import java.util.stream.Stream;
+import java.io.File;
+import java.util.regex.Pattern;
 
 public class FilesystemStore implements Store, Store.ListableStore {
 
@@ -142,28 +144,13 @@ public class FilesystemStore implements Store, Store.ListableStore {
         }
     }
 
-    /**
-     * Helper to convert a filesystem Path back into the full String[] key array
-     * relative to the prefix
-     */
-    private String[] pathToKeyArray(Path rootPath, Path currentPath, String[] prefix) {
-        Path relativePath = rootPath.relativize(currentPath);
-        int relativeCount = relativePath.getNameCount();
-
-        String[] result = new String[relativeCount];
-        for (int i = 0; i < relativeCount; i++) {
-            result[i] = relativePath.getName(i).toString();
-        }
-        return result;
-    }
-
     @Override
     public Stream<String[]> list(String[] prefix) {
         Path rootPath = resolveKeys(prefix);
         try {
-            return Files.walk(rootPath)
-                    .filter(Files::isRegularFile)
-                    .map(path -> pathToKeyArray(rootPath, path, prefix));
+            // Probably easiest and reasonably fast tree transition
+            return Files.walk(rootPath).filter(Files::isRegularFile).parallel()// Filter only regular files (not directories)
+                    .map(path -> rootPath.relativize(path).toString().split(Pattern.quote(File.separator))); // Get relative path and split into keys
         } catch (IOException e) {
             throw StoreException.listFailed(
                     this.toString(),

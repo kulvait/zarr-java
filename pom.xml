@@ -1,77 +1,77 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+ <modelVersion>4.0.0</modelVersion>
 
     <groupId>dev.zarr</groupId>
     <artifactId>zarr-java</artifactId>
     <version>0.1.3</version>
 
-    <name>zarr-java</name>
+ <name>zarr-java</name>
 
-    <description>
-        zarr-java is a Java library providing an implementation of chunked,
-        compressed, N-dimensional arrays close to the zarr-python package.
-    </description>
+ <description>
+  zarr-java is a Java library providing an implementation of chunked,
+  compressed, N-dimensional arrays close to the
+  zarr-python package.
+ </description>
 
-    <url>https://github.com/zarr-developers/zarr-java</url>
+ <url>https://github.com/zarr-developers/zarr-java</url>
 
-    <licenses>
-        <license>
-            <name>MIT License</name>
-            <url>https://opensource.org/license/mit/</url>
-            <distribution>repo</distribution>
-        </license>
-    </licenses>
+ <licenses>
+  <license>
+   <name>MIT License</name>
+   <url>https://opensource.org/license/mit/</url>
+   <distribution>repo</distribution>
+  </license>
+ </licenses>
 
-    <scm>
-        <url>https://github.com/zarr-developers/zarr-java</url>
-        <connection>scm:git:git://github.com/zarr-developers/zarr-java.git</connection>
-        <developerConnection>scm:git:git@github.com:zarr-developers/zarr-java.git</developerConnection>
-    </scm>
+ <scm>
+  <url>https://github.com/zarr-developers/zarr-java</url>
+  <connection>scm:git:git://github.com/zarr-developers/zarr-java.git</connection>
+  <developerConnection>scm:git:git@github.com:zarr-developers/zarr-java.git</developerConnection>
+ </scm>
 
-    <developers>
-        <developer>
-            <id>normanrz</id>
-            <name>Norman Rzepka</name>
-            <roles>
-                <role>maintainer</role>
-            </roles>
-        </developer>
-    </developers>
+ <developers>
+  <developer>
+   <id>normanrz</id>
+   <name>Norman Rzepka</name>
+   <roles>
+    <role>maintainer</role>
+   </roles>
+  </developer>
+ </developers>
 
-    <properties>
-        <maven.compiler.release>8</maven.compiler.release>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <jackson.version>2.20.0</jackson.version>
-        <aws.version>2.34.6</aws.version>
-        <netcdfJavaVersion>5.9.1</netcdfJavaVersion>
-        <zstdVersion>1.5.5-7</zstdVersion>
-        <junit-jupiter-version>5.14.0</junit-jupiter-version>
-        <findbugs.version>3.0.2</findbugs.version>
-    </properties>
+ <properties>
+  <maven.compiler.release>8</maven.compiler.release>
+  <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  <jackson.version>2.20.0</jackson.version>
+  <aws.version>2.34.6</aws.version>
+  <netcdfJavaVersion>5.9.1</netcdfJavaVersion>
+  <zstdVersion>1.5.5-7</zstdVersion>
+  <junit-jupiter-version>5.14.0</junit-jupiter-version>
+  <findbugs.version>3.0.2</findbugs.version>
+ </properties>
 
-    <dependencies>
-        <!-- JUnit 5 dependencies -->
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-api</artifactId>
-            <version>${junit-jupiter-version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-engine</artifactId>
-            <version>${junit-jupiter-version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-params</artifactId>
-            <version>${junit-jupiter-version}</version>
-            <scope>test</scope>
-        </dependency>
+ <dependencies>
+  <!-- JUnit 5 dependencies -->
+  <dependency>
+   <groupId>org.junit.jupiter</groupId>
+   <artifactId>junit-jupiter-api</artifactId>
+   <version>${junit-jupiter-version}</version>
+   <scope>test</scope>
+  </dependency>
+  <dependency>
+   <groupId>org.junit.jupiter</groupId>
+   <artifactId>junit-jupiter-engine</artifactId>
+   <version>${junit-jupiter-version}</version>
+   <scope>test</scope>
+  </dependency>
+  <dependency>
+   <groupId>org.junit.jupiter</groupId>
+   <artifactId>junit-jupiter-params</artifactId>
+   <version>${junit-jupiter-version}</version>
+   <scope>test</scope>
+  </dependency>
 
         <!-- Other dependencies -->
         <dependency>
@@ -133,20 +133,20 @@
             <version>1.28.0</version>
         </dependency>
 
-        <dependency>
-            <groupId>info.picocli</groupId>
-            <artifactId>picocli</artifactId>
-            <version>4.7.6</version>
-        </dependency>
-    </dependencies>
+  <dependency>
+   <groupId>info.picocli</groupId>
+   <artifactId>picocli</artifactId>
+   <version>4.7.6</version>
+  </dependency>
+ </dependencies>
 
-    <repositories>
-        <repository>
-            <id>unidata-all</id>
-            <name>Unidata All</name>
-            <url>https://artifacts.unidata.ucar.edu/repository/unidata-all/</url>
-        </repository>
-    </repositories>
+ <repositories>
+  <repository>
+   <id>unidata-all</id>
+   <name>Unidata All</name>
+   <url>https://artifacts.unidata.ucar.edu/repository/unidata-all/</url>
+  </repository>
+ </repositories>
 
     <build>
         <plugins>
@@ -275,6 +275,85 @@
                     </execution>
                 </executions>
             </plugin>
-        </plugins>
-    </build>
+   <!-- Spotless plugin for code formatting, run using mvn spotless:apply -->
+   <plugin>
+    <groupId>com.diffplug.spotless</groupId>
+    <artifactId>spotless-maven-plugin</artifactId>
+    <version>3.4.0</version> <!-- use latest stable -->
+    <configuration>
+
+     <!-- Java formatting -->
+     <java>
+      <eclipse>
+       <file>${project.basedir}/styles/eclipseStyle.xml</file>
+      </eclipse>
+     </java>
+
+     <!-- XML formatting -->
+     <formats>
+      <format>
+       <includes>
+        <include>**/*.xml</include>
+       </includes>
+       <eclipseWtp>
+        <type>XML</type>
+        <files>
+         <file>${project.basedir}/styles/org.eclipse.wst.xml.core.prefs</file>
+        </files>
+       </eclipseWtp>
+      </format>
+     </formats>
+
+    </configuration>
+    <executions>
+     <execution>
+      <goals>
+       <goal>apply</goal>
+      </goals>
+     </execution>
+    </executions>
+   </plugin>
+  </plugins>
+ </build>
+ <profiles>
+  <!-- Deploy into specific directory -->
+  <profile>
+   <id>deploy-plugin</id>
+   <activation>
+    <property>
+     <name>deploy.dir</name>
+    </property>
+   </activation>
+   <build>
+    <plugins>
+     <plugin>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-resources-plugin</artifactId>
+      <version>3.3.1</version>
+      <executions>
+       <execution>
+        <id>copy-plugin</id>
+        <phase>package</phase>
+        <goals>
+         <goal>copy-resources</goal>
+        </goals>
+        <configuration>
+         <outputDirectory>${deploy.dir}</outputDirectory>
+         <overwrite>true</overwrite>
+         <resources>
+          <resource>
+           <directory>${project.build.directory}</directory>
+           <includes>
+            <include>${project.build.finalName}.jar</include>
+           </includes>
+          </resource>
+         </resources>
+        </configuration>
+       </execution>
+      </executions>
+     </plugin>
+    </plugins>
+   </build>
+  </profile>
+ </profiles>
 </project>
