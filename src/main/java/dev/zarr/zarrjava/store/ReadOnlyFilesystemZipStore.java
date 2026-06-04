@@ -371,6 +371,9 @@ public class ReadOnlyFilesystemZipStore extends ZipStore {
         return name;
     }
 
+    public Path getPath() {
+        return zipStorePath;
+    }
 
     @Override
     public InputStream getInputStream(String[] keys, long start, long end) {
